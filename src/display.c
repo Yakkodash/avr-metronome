@@ -6,7 +6,6 @@
 #include "symbols.h"
 
 static uint8_t display_buf[DIG_NUM];
-static uint8_t display_buf_last[DIG_NUM] = "";
 static uint8_t display_cur_dig = 0;
 
 void display_init( void ) {
@@ -35,10 +34,6 @@ void display_set( uint8_t data[DIG_NUM] ) {
 }
 
 void display_loop( void ) {
-  if( strcmp( (const char*)display_buf_last, (const char*)display_buf ) == 0 ) return;
-
-  memcpy( display_buf_last, display_buf, DIG_NUM * sizeof( uint8_t ) );
-
   display_clear( );
   display_set_digit( display_cur_dig );
 
