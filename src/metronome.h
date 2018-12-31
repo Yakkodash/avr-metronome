@@ -8,7 +8,7 @@
 #define MTRNM_MAX_SUBDIV 8
 
 #define MTRNM_MAX_BEEP_MS 20
-#define MTRNM_MIN_BEEP_MS 7
+#define MTRNM_MIN_BEEP_MS 5
 
 void mtrnm_start( void );
 void mtrnm_stop( void );

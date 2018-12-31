@@ -1,17 +1,17 @@
 #include "led.h"
 
 void led_init( void ) {
-  LED_DIR_PORT |= _BV( LED0 );
-  LED_DIR_PORT |= _BV( LED1 );
-  LED_DIR_PORT |= _BV( LED2 );
+  for( uint8_t i = 0; i < LED_NUM; i++ ) {
+    LED_DIR_PORT |= _BV( leds[i] );
+  }
 }
 
-void set_led( led_t led, uint8_t state ) {
+void led_set( uint8_t led_num, uint8_t state ) {
 
   if( state ) {
-    LED_PORT |= _BV( led );
+    LED_PORT |= _BV( leds[led_num] );
   } else {
-    LED_PORT &= ~(_BV( led ));
+    LED_PORT &= ~(_BV( leds[led_num] ));
   }
 
 }

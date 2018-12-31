@@ -9,7 +9,7 @@ CC       = avr-gcc
 OBJCOPY  = avr-objcopy
 DUDE     = avrdude
 
-CFLAGS   = -Werror -Wall -Os -DF_CPU=16000000UL
+CFLAGS   = -Wall -Werror -Os -DF_CPU=16000000UL
 PFLAGS   = -b 115200
 
 SRCDIR   = src

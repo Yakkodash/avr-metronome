@@ -1,7 +1,10 @@
 #include <avr/interrupt.h>
+#include <stdlib.h>
+
 #include "metronome.h"
 #include "sound.h"
 #include "led.h"
+#include "display.h"
 
 void mtrnm_start( void ) {
   TCCR1B |= _BV( CS12 ) | _BV( CS10 ); // prescaler 1024 selected
@@ -11,7 +14,6 @@ void mtrnm_start( void ) {
 
 void mtrnm_stop( void ) {
   TCCR1B = 0;
-  TIMSK1 = 0;
 }
 
 static double bpm2ms( double bpm ) { 
@@ -28,6 +30,8 @@ void mtrnm_reset( void ) {
   gl_mtrnm_p.cur_subdiv = 0;
   gl_mtrnm_p.cur_inc_bar = 0;
   gl_mtrnm_p.state = STRONG_BEAT_START;
+  mtrnm_stop( );
+  mtrnm_start( );
 }
 
 static void mtrnm_calc_next_bpm( ) {
@@ -54,9 +58,33 @@ static void mtrnm_calc_next_bpm( ) {
 }
 
 
+static uint8_t output_buf[4];
+static uint8_t buf_bpm[3];
+
+static void mtrnm_display( void ) {
+  itoa( gl_mtrnm_p.cur_bpm, (char*)buf_bpm, 10 );
+
+  output_buf[0] = 'b'; // b for bpm
+
+  if( gl_mtrnm_p.cur_bpm < 100 ) {
+    output_buf[1] = ' ';
+    output_buf[2] = buf_bpm[0];
+    output_buf[3] = buf_bpm[1];
+  } else {
+    output_buf[1] = buf_bpm[0];
+    output_buf[2] = buf_bpm[1];
+    output_buf[3] = buf_bpm[2];
+  }
+
+  display_set( output_buf );
+
+}
+
 ISR( TIMER1_OVF_vect ) {
 
   gl_mtrnm_p.beat_ms = bpm2ms( ( gl_mtrnm_p.mode == MTRNM_PROGRESSIVE ? gl_mtrnm_p.cur_bpm : gl_mtrnm_p.bpm ) * gl_mtrnm_p.subdiv );
+
+  mtrnm_display( );
 
   switch( gl_mtrnm_p.state ) {
     case STRONG_BEAT_START:
@@ -65,9 +93,9 @@ ISR( TIMER1_OVF_vect ) {
       sound_set_freq( gl_mtrnm_p.accent_en ? gl_mtrnm_p.strong_freq : gl_mtrnm_p.weak_freq );
       sound_start( );
 
-      set_led( 0, 1 );
-      set_led( 1, 1 );
-      set_led( 2, 1 );
+      led_set( 0, 1 );
+      led_set( 1, 1 );
+      led_set( 2, 1 );
       
       gl_mtrnm_p.cur_beat = 1;     
       gl_mtrnm_p.cur_subdiv = 1;
@@ -80,8 +108,10 @@ ISR( TIMER1_OVF_vect ) {
       sound_set_freq( gl_mtrnm_p.weak_freq );
       sound_start( );
 
-      set_led( 1, 1 );
-      set_led( 2, 1 );
+      led_set( 1, 1 );
+
+      if( gl_mtrnm_p.subdiv > 1 )
+        led_set( 2, 1 );
 
       gl_mtrnm_p.cur_subdiv = 1;
       
@@ -94,7 +124,7 @@ ISR( TIMER1_OVF_vect ) {
         sound_set_freq( gl_mtrnm_p.subdiv_freq );
         sound_start( );
 
-        set_led( 1, 1 );
+        led_set( 2, 1 );
       }
 
       mtrnm_set_period( gl_mtrnm_p.beep_ms );
@@ -104,9 +134,9 @@ ISR( TIMER1_OVF_vect ) {
     case BEAT_END:
       sound_stop( );
 
-      set_led( 0, 0 );
-      set_led( 1, 0 );
-      set_led( 2, 0 );
+      led_set( 0, 0 );
+      led_set( 1, 0 );
+      led_set( 2, 0 );
       
       mtrnm_set_period( gl_mtrnm_p.beat_ms - gl_mtrnm_p.beep_ms );
 

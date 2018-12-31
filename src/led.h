@@ -2,17 +2,14 @@
 
 #include <avr/io.h>
 
-#define LED_DIR_PORT  DDRB
+#define LED_DIR_PORT DDRD
+#define LED_PORT PORTD
 
-#define LED_PORT  PORTB
+#define LED_NUM 3
 
-typedef enum {
-  LED0 = PB0,
-  LED1 = PB1,
-  LED2 = PB2
-} led_t;
+static const uint8_t leds[LED_NUM] = { PD3, PD4, PD5 };
 
 void led_init( void );
 
-void set_led( led_t led, uint8_t state );
+void led_set( uint8_t led_num, uint8_t state );
 
