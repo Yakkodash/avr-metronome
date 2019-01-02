@@ -41,7 +41,7 @@ extern struct mtrnm_s {
   uint16_t  weak_freq;
   uint16_t  strong_freq;
   uint16_t  subdiv_freq;
-  
+
   uint8_t   cur_beat;
   uint8_t   cur_subdiv;
 

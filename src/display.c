@@ -13,31 +13,35 @@ void display_init( void ) {
     DISP_CS_DIR_PORT |= _BV( display_digs[i] );
     DISP_CS_PORT |= _BV( display_digs[i] );
   }
-
-  spi_master_set( );
-}
-
-static void display_clear( void ) {
-  spi_master_reset( );
-  spi_master_set( );
 }
 
 static void display_set_digit( uint8_t dig_num ) {
-  for( uint8_t i = 0; i < DIG_NUM; i++ ) 
+  for( uint8_t i = 0; i < DIG_NUM; i++ )
     DISP_CS_PORT |= _BV( display_digs[i] );
 
-  DISP_CS_PORT &= ~( _BV( display_digs[dig_num] ) ); 
+  DISP_CS_PORT &= ~( _BV( display_digs[dig_num] ) );
 }
 
-void display_set( uint8_t data[DIG_NUM] ) {
-  memcpy( display_buf, data, DIG_NUM * sizeof( uint8_t ) );
+void display_set( char *data, uint8_t len ) {
+  uint8_t c, j = 0;
+
+  for( uint8_t i = 0; i < len; i++ ) {
+    if( data[i+1] == '.' ) {
+      c = char2segment( data[i] ) | char2segment( '.' );
+      i++;
+    } else {
+      c = char2segment( data[i] );
+    }
+    display_buf[j] = c;
+    j++;
+  }
+
 }
 
 void display_loop( void ) {
-  display_clear( );
   display_set_digit( display_cur_dig );
 
-  spi_transmit( char2segment( display_buf[display_cur_dig] ) );
+  spi_transmit( display_buf[display_cur_dig] );
 
   display_cur_dig++;
   if( display_cur_dig == DIG_NUM ) display_cur_dig = 0;

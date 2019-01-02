@@ -1,5 +1,4 @@
 #include <avr/interrupt.h>
-#include <stdlib.h>
 
 #include "metronome.h"
 #include "sound.h"
@@ -16,7 +15,7 @@ void mtrnm_stop( void ) {
   TCCR1B = 0;
 }
 
-static double bpm2ms( double bpm ) { 
+static double bpm2ms( double bpm ) {
   return 60000 / bpm;
 }
 
@@ -47,36 +46,36 @@ static void mtrnm_calc_next_bpm( ) {
       else if( gl_mtrnm_p.cur_bpm < gl_mtrnm_p.target_bpm ) {
         gl_mtrnm_p.cur_bpm += gl_mtrnm_p.inc_bpm;
         if( gl_mtrnm_p.cur_bpm > gl_mtrnm_p.target_bpm ) gl_mtrnm_p.cur_bpm = gl_mtrnm_p.target_bpm;
-      } 
+      }
 
       gl_mtrnm_p.cur_inc_bar = 0;
-      
+
     }
-  }  
+  }
 
   gl_mtrnm_p.cur_inc_bar++;
 }
 
 
-static uint8_t output_buf[4];
-static uint8_t buf_bpm[3];
+static char output_buf[5];
 
 static void mtrnm_display( void ) {
-  itoa( gl_mtrnm_p.cur_bpm, (char*)buf_bpm, 10 );
+  // Cause itoa is broken
 
-  output_buf[0] = 'b'; // b for bpm
+  // b. for BPM prefix
+  output_buf[0] = 'b';
+  output_buf[1] = '.';
 
-  if( gl_mtrnm_p.cur_bpm < 100 ) {
-    output_buf[1] = ' ';
-    output_buf[2] = buf_bpm[0];
-    output_buf[3] = buf_bpm[1];
-  } else {
-    output_buf[1] = buf_bpm[0];
-    output_buf[2] = buf_bpm[1];
-    output_buf[3] = buf_bpm[2];
-  }
+  // Hundreds digit
+  output_buf[2] = gl_mtrnm_p.cur_bpm < 100 ? ' ' : '0' + ( ( gl_mtrnm_p.cur_bpm / 100UL ) % 10UL );
 
-  display_set( output_buf );
+  // Ones digit
+  output_buf[4] = '0' + ( gl_mtrnm_p.cur_bpm % 10UL );
+
+  // Tens digit
+  output_buf[3] = '0' + ( ( gl_mtrnm_p.cur_bpm / 10UL ) % 10UL );
+
+  display_set( output_buf, 5 );
 
 }
 
@@ -96,8 +95,8 @@ ISR( TIMER1_OVF_vect ) {
       led_set( 0, 1 );
       led_set( 1, 1 );
       led_set( 2, 1 );
-      
-      gl_mtrnm_p.cur_beat = 1;     
+
+      gl_mtrnm_p.cur_beat = 1;
       gl_mtrnm_p.cur_subdiv = 1;
 
       mtrnm_set_period( gl_mtrnm_p.beep_ms );
@@ -114,7 +113,7 @@ ISR( TIMER1_OVF_vect ) {
         led_set( 2, 1 );
 
       gl_mtrnm_p.cur_subdiv = 1;
-      
+
       mtrnm_set_period( gl_mtrnm_p.beep_ms );
       gl_mtrnm_p.state = BEAT_END;
       break;
@@ -137,17 +136,17 @@ ISR( TIMER1_OVF_vect ) {
       led_set( 0, 0 );
       led_set( 1, 0 );
       led_set( 2, 0 );
-      
+
       mtrnm_set_period( gl_mtrnm_p.beat_ms - gl_mtrnm_p.beep_ms );
 
       if( gl_mtrnm_p.subdiv > 1 && gl_mtrnm_p.cur_subdiv < gl_mtrnm_p.subdiv ) {
         gl_mtrnm_p.cur_subdiv++;
         gl_mtrnm_p.state = SUBDIV_BEAT_START;
-      } 
+      }
       else if( gl_mtrnm_p.cur_beat == gl_mtrnm_p.beats ) {
         gl_mtrnm_p.cur_beat = 1;
         gl_mtrnm_p.state = STRONG_BEAT_START;
-      } 
+      }
       else {
         gl_mtrnm_p.cur_beat++;
         gl_mtrnm_p.state = WEAK_BEAT_START;
