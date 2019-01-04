@@ -1,19 +1,17 @@
 #include "sound.h"
 
-#include <avr/io.h>
-
-void sound_init( ) {
+void sound_init( void ) {
   TCCR0A = _BV( COM0A0 ) | _BV( WGM01 ); // CTC mode
   TCCR0B = 0; // stop timer
 
 	SOUND_PORT_DIR |=  _BV( SOUND_PIN_DIR );
 }
 
-void sound_start( ) {
+void sound_start( void ) {
   TCCR0B = _BV( CS12 ); // start timer, 256 prescaler
 }
 
-void sound_stop( ) {
+void sound_stop( void ) {
   TCCR0B = 0; // stop timer
 }
 

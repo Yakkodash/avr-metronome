@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <avr/io.h>
 
 #define SOUND_FREQ_MIN  ( F_CPU / ( 2 * 256 ) / ( 256 + 1 ) )
 #define SOUND_FREQ_MAX  ( F_CPU / ( 2 * 256 ) )

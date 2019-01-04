@@ -24,10 +24,9 @@ static void mtrnm_set_period( double ms ) {
 }
 
 void mtrnm_reset( void ) {
-  gl_mtrnm_p.cur_bpm = gl_mtrnm_p.bpm;
   gl_mtrnm_p.cur_beat = 0;
   gl_mtrnm_p.cur_subdiv = 0;
-  gl_mtrnm_p.cur_inc_bar = 0;
+  gl_mtrnm_p.cur_bar = 0;
   gl_mtrnm_p.state = STRONG_BEAT_START;
   mtrnm_stop( );
   mtrnm_start( );
@@ -35,61 +34,36 @@ void mtrnm_reset( void ) {
 
 static void mtrnm_calc_next_bpm( ) {
 
-  if( gl_mtrnm_p.mode == MTRNM_PROGRESSIVE ) {
+  if( gl_mtrnm_p.mode == MTRNM_MODE_PROG ) {
 
-    if( gl_mtrnm_p.cur_inc_bar % gl_mtrnm_p.inc_bar == 0 && gl_mtrnm_p.cur_inc_bar ) {
-      if( gl_mtrnm_p.cur_bpm > gl_mtrnm_p.target_bpm ) {
-        gl_mtrnm_p.cur_bpm -= gl_mtrnm_p.inc_bpm;
-        if( gl_mtrnm_p.cur_bpm < gl_mtrnm_p.target_bpm ) gl_mtrnm_p.cur_bpm = gl_mtrnm_p.target_bpm;
+    if( gl_mtrnm_p.cur_bar % gl_mtrnm_p.inc_bar == 0 && gl_mtrnm_p.cur_bar ) {
+      if( gl_mtrnm_p.active_bpm > gl_mtrnm_p.target_bpm ) {
+        gl_mtrnm_p.active_bpm -= gl_mtrnm_p.inc_bpm;
+        if( gl_mtrnm_p.active_bpm < gl_mtrnm_p.target_bpm ) gl_mtrnm_p.active_bpm = gl_mtrnm_p.target_bpm;
       }
 
-      else if( gl_mtrnm_p.cur_bpm < gl_mtrnm_p.target_bpm ) {
-        gl_mtrnm_p.cur_bpm += gl_mtrnm_p.inc_bpm;
-        if( gl_mtrnm_p.cur_bpm > gl_mtrnm_p.target_bpm ) gl_mtrnm_p.cur_bpm = gl_mtrnm_p.target_bpm;
+      else if( gl_mtrnm_p.active_bpm < gl_mtrnm_p.target_bpm ) {
+        gl_mtrnm_p.active_bpm += gl_mtrnm_p.inc_bpm;
+        if( gl_mtrnm_p.active_bpm > gl_mtrnm_p.target_bpm ) gl_mtrnm_p.active_bpm = gl_mtrnm_p.target_bpm;
       }
 
-      gl_mtrnm_p.cur_inc_bar = 0;
+      gl_mtrnm_p.cur_bar = 0;
 
     }
   }
 
-  gl_mtrnm_p.cur_inc_bar++;
-}
-
-
-static char output_buf[5];
-
-static void mtrnm_display( void ) {
-  // Cause itoa is broken
-
-  // b. for BPM prefix
-  output_buf[0] = 'b';
-  output_buf[1] = '.';
-
-  // Hundreds digit
-  output_buf[2] = gl_mtrnm_p.cur_bpm < 100 ? ' ' : '0' + ( ( gl_mtrnm_p.cur_bpm / 100UL ) % 10UL );
-
-  // Ones digit
-  output_buf[4] = '0' + ( gl_mtrnm_p.cur_bpm % 10UL );
-
-  // Tens digit
-  output_buf[3] = '0' + ( ( gl_mtrnm_p.cur_bpm / 10UL ) % 10UL );
-
-  display_set( output_buf, 5 );
-
+  gl_mtrnm_p.cur_bar++;
 }
 
 ISR( TIMER1_OVF_vect ) {
 
-  gl_mtrnm_p.beat_ms = bpm2ms( ( gl_mtrnm_p.mode == MTRNM_PROGRESSIVE ? gl_mtrnm_p.cur_bpm : gl_mtrnm_p.bpm ) * gl_mtrnm_p.subdiv );
-
-  mtrnm_display( );
+  gl_mtrnm_p.beat_ms = bpm2ms( gl_mtrnm_p.active_bpm * gl_mtrnm_p.subdiv );
 
   switch( gl_mtrnm_p.state ) {
     case STRONG_BEAT_START:
       mtrnm_calc_next_bpm( );
 
-      sound_set_freq( gl_mtrnm_p.accent_en ? gl_mtrnm_p.strong_freq : gl_mtrnm_p.weak_freq );
+      sound_set_freq( gl_mtrnm_p.accent_en ? gl_mtrnm_p.freq_strong : gl_mtrnm_p.freq_weak );
       sound_start( );
 
       led_set( 0, 1 );
@@ -104,11 +78,12 @@ ISR( TIMER1_OVF_vect ) {
       break;
 
     case WEAK_BEAT_START:
-      sound_set_freq( gl_mtrnm_p.weak_freq );
+      sound_set_freq( gl_mtrnm_p.freq_weak );
       sound_start( );
 
       led_set( 1, 1 );
 
+      // Do not trigger subdiv LED if no subdivision is used
       if( gl_mtrnm_p.subdiv > 1 )
         led_set( 2, 1 );
 
@@ -119,8 +94,19 @@ ISR( TIMER1_OVF_vect ) {
       break;
 
     case SUBDIV_BEAT_START:
-      if( !(gl_mtrnm_p.cur_subdiv % 2 == 0 && gl_mtrnm_p.swing) ) {
-        sound_set_freq( gl_mtrnm_p.subdiv_freq );
+      gl_mtrnm_p.cur_subdiv++;
+
+      if( gl_mtrnm_p.swing_en ) {
+        if( gl_mtrnm_p.cur_subdiv == 1 || gl_mtrnm_p.cur_subdiv == gl_mtrnm_p.subdiv ) {
+
+          sound_set_freq( gl_mtrnm_p.freq_subdiv );
+          sound_start( );
+
+          led_set( 2, 1 );
+        }
+
+      } else {
+        sound_set_freq( gl_mtrnm_p.freq_subdiv );
         sound_start( );
 
         led_set( 2, 1 );
@@ -140,8 +126,8 @@ ISR( TIMER1_OVF_vect ) {
       mtrnm_set_period( gl_mtrnm_p.beat_ms - gl_mtrnm_p.beep_ms );
 
       if( gl_mtrnm_p.subdiv > 1 && gl_mtrnm_p.cur_subdiv < gl_mtrnm_p.subdiv ) {
-        gl_mtrnm_p.cur_subdiv++;
         gl_mtrnm_p.state = SUBDIV_BEAT_START;
+
       }
       else if( gl_mtrnm_p.cur_beat == gl_mtrnm_p.beats ) {
         gl_mtrnm_p.cur_beat = 1;

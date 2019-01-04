@@ -20,15 +20,7 @@ static void spi_commit( void ) {
 	SPI_PORT |= _BV( SPI_SS );
 	SPI_PORT &= ~( _BV( SPI_SS ) );
 }
-/*
-void spi_master_reset( void ) {
-  SPI_PORT &= ~( _BV( SPI_MR ) );
-}
 
-void spi_master_set( void ) {
-  SPI_PORT |= _BV( SPI_MR );
-}
-*/
 // There are two shift registers giving 16bit output register, but SPDR is only 8bit
 void spi_transmit( uint8_t val ) {
 	SPDR = val;

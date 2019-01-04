@@ -1,25 +1,36 @@
-#include <avr/interrupt.h>
-#include <util/delay.h>
+#include <avr/io.h>
 
 #include "sound.h"
 #include "metronome.h"
 #include "spi.h"
 #include "display.h"
 #include "led.h"
+#include "controls.h"
+#include "menu.h"
 
-struct mtrnm_s gl_mtrnm_p   = {0};
+struct mtrnm_s gl_mtrnm_p = {0};
+struct ctrl_s gl_ctrl_p = {0};
 
-ISR( INT0_vect ) {
-  //mtrnm_reset( );
-}	
+void inc( void ) {
+  if( gl_mtrnm_p.active_bpm < MTRNM_MAX_BPM ) gl_mtrnm_p.active_bpm++;
+}
 
-/*ISR( PCINT2_vect ) {
- // mtrnm_reset( );
+void dec( void ) {
+  if( gl_mtrnm_p.active_bpm > MTRNM_MIN_BPM ) gl_mtrnm_p.active_bpm--;
+}
 
-}*/
+void chng_mode( void ) {
+  gl_mtrnm_p.mode = gl_mtrnm_p.mode == MTRNM_MODE_CONST ? MTRNM_MODE_PROG : MTRNM_MODE_CONST;
+}
 
 int main( void ) {
   cli( );
+
+  gl_ctrl_p.ctrl_enc_a_callback = inc;
+  gl_ctrl_p.ctrl_enc_b_callback = dec;
+
+  gl_ctrl_p.ctrl_enc_btn_callback = chng_mode;
+  gl_ctrl_p.ctrl_btn1_callback = mtrnm_reset;
 
   CLKPR = ( 1 << CLKPCE );
   CLKPR = 0;
@@ -29,44 +40,33 @@ int main( void ) {
   mtrnm_start( );
   led_init( );
   display_init( );
+  controls_init( );
 
   gl_mtrnm_p.beep_ms = 5;
 
-  gl_mtrnm_p.strong_freq = 3135;
-  gl_mtrnm_p.weak_freq = 1661;
-  gl_mtrnm_p.subdiv_freq = 440;
+  gl_mtrnm_p.freq_strong = 3135;
+  gl_mtrnm_p.freq_weak = 1661;
+  gl_mtrnm_p.freq_subdiv = 440;
 
-  gl_mtrnm_p.subdiv = 1; // 8 max
+  gl_mtrnm_p.subdiv = 4; // 8 max
 
-  gl_mtrnm_p.swing = 0; // subdiv must be 3
+  gl_mtrnm_p.swing_en = 0; // subdiv must be odd
   gl_mtrnm_p.accent_en = 1;
 
   gl_mtrnm_p.beats = 4;
 
-  gl_mtrnm_p.bpm = 160;
-
-  gl_mtrnm_p.cur_bpm = 60;
+  gl_mtrnm_p.active_bpm = MTRNM_MIN_BPM;
   gl_mtrnm_p.target_bpm = MTRNM_MAX_BPM;
-  gl_mtrnm_p.inc_bar = 4;
+  gl_mtrnm_p.inc_bar = 1;
   gl_mtrnm_p.inc_bpm = 5;
 
-  gl_mtrnm_p.mode = MTRNM_PROGRESSIVE;
-
-  //DDRD &= ~( 1<<PD2 );		// Set PD2 as input (Using for interupt INT0)
-  //PORTD |= 1<<PD2;		// Enable PD2 pull-up resistor
-  //EIMSK |= 1<<INT0;					// Enable INT0
-  //EICRA |= _BV( ISC01 );
-  //DDRD &= ~( _BV( PD0 ) );
-
-  //PCMSK2 |= _BV( PCINT16 );
- // PCICR |= _BV( PCIE2 );
+  gl_mtrnm_p.mode = MTRNM_MODE_CONST;
 
   sei( );
 
   while( 1 ) {
+    menu_fsm( );
     display_loop( );
-    //if ( PIND & (1<<PD0) ) mtrnm_reset( );   // see comment #2
-
   }
 
   return 0;

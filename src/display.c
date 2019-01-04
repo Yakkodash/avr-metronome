@@ -26,7 +26,7 @@ void display_set( char *data, uint8_t len ) {
   uint8_t c, j = 0;
 
   for( uint8_t i = 0; i < len; i++ ) {
-    if( data[i+1] == '.' ) {
+    if( data[i+1] == '.' && data[i] != '.' ) {
       c = char2segment( data[i] ) | char2segment( '.' );
       i++;
     } else {
