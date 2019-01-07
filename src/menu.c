@@ -1,44 +1,45 @@
 #include "menu.h"
 #include "metronome.h"
 #include "display.h"
+#include "util.h"
+#include "controls.h"
 
-static char output_buf[4];
+#define MENU_ITEMS_CNT 5
 
-uint16_t pow16( uint16_t val, uint8_t pow ) {
-  if( pow == 0 ) return 1;
-  for( uint8_t i = 0; i < pow; i++ ) {
-    val *= val;
+static char output_buf[8];
+static char dig_buf[4];
+static uint8_t output_len = 0;
+
+static uint8_t cur_item_buf = 1;
+static uint8_t cur_item = 0;
+
+#include "menu_clbks.h"
+
+static menu_item_t main_menu[MENU_ITEMS_CNT] = {
+  { .menu_enc_left_clbk = menu_bpm_inc,       .menu_enc_rigth_clbk = menu_bpm_dec,        .menu_print_clbk = menu_print_tempo   },
+  { .menu_enc_left_clbk = menu_beat_inc,      .menu_enc_rigth_clbk = menu_beat_dec,       .menu_print_clbk = menu_print_beats   },
+  { .menu_enc_left_clbk = menu_subdivs_inc,   .menu_enc_rigth_clbk = menu_subdivs_dec,    .menu_print_clbk = menu_print_subdivs },
+  { .menu_enc_left_clbk = menu_toggle_accent, .menu_enc_rigth_clbk = menu_toggle_accent,  .menu_print_clbk = menu_print_accent  },
+  { .menu_enc_left_clbk = menu_toggle_swing,  .menu_enc_rigth_clbk = menu_toggle_swing,   .menu_print_clbk = menu_print_swing   },
+};
+
+void menu_forward_item( void ) {
+  if( cur_item == MENU_ITEMS_CNT - 1 ) cur_item = 0;
+  else cur_item++;
+}
+
+void menu_back_item( void ) {
+  if( cur_item == 0 ) cur_item = MENU_ITEMS_CNT - 1;
+  else cur_item--;
+}
+
+void menu_tick( void ) {
+  if( cur_item != cur_item_buf ) {
+    cur_item_buf = cur_item;
+    gl_ctrl_p.ctrl_enc_a_clbk = main_menu[cur_item_buf].menu_enc_left_clbk;
+    gl_ctrl_p.ctrl_enc_b_clbk = main_menu[cur_item_buf].menu_enc_rigth_clbk;
   }
-  return val;
+  main_menu[cur_item].menu_print_clbk( );
+  display_set_digs( output_buf, output_len );
+  display_tick( );
 }
-
-void dig_itoa( char *dst, uint16_t val ) {
-
-  for( uint8_t i = 0; i < DIG_NUM; i++ ) {
-    dst[i] = '0' + ( val / ( pow16( 10, i ) ) ) % 10;
-  }
-
-}
-
-void menu_fsm( void ) {
-  // Cause itoa is broken
-
-  // t. for tempo prefix
-/*  output_buf[0] = 't';
-  output_buf[1] = '.';
-
-  // Hundreds digit
-  output_buf[2] = gl_mtrnm_p.active_bpm < 100 ? ' ' : '0' + ( ( gl_mtrnm_p.active_bpm / 100UL ) % 10UL );
-
-
-  // Tens digit
-  output_buf[3] = '0' + ( ( gl_mtrnm_p.active_bpm / 10UL ) % 10UL );
-
-  // Ones digit
-  output_buf[4] = '0' + ( gl_mtrnm_p.active_bpm % 10UL );
-*/
-  dig_itoa( output_buf, gl_mtrnm_p.active_bpm );
-
-  display_set( output_buf, 4 );
-}
-

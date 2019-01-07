@@ -5,10 +5,14 @@
 #define MTRNM_MAX_BPM 500
 #define MTRNM_MIN_BPM 15
 
-#define MTRNM_MAX_SUBDIV 8
+#define MTRNM_MAX_BEATS 99
+#define MTRNM_MIN_BEATS 1
+
+#define MTRNM_MAX_SUBDIVS 9
+#define MTRNM_MIN_SUBDIVS 1
 
 #define MTRNM_MAX_BEEP_MS 20
-#define MTRNM_MIN_BEEP_MS 5
+#define MTRNM_MIN_BEEP_MS 7
 
 void mtrnm_start( void );
 void mtrnm_stop( void );
@@ -34,11 +38,12 @@ extern struct mtrnm_s {
   // For progressive mode
   uint16_t  target_bpm;
   uint16_t  active_bpm;
+  uint16_t  start_bpm;
 
   uint16_t  beat_ms;
 
   uint8_t   beats;
-  uint8_t   subdiv;
+  uint8_t   subdivs;
 
   uint8_t   beep_ms;
 

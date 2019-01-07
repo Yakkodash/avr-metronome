@@ -3,13 +3,13 @@
 TARGET   = metronome
 MCU      = atmega328p
 PROGR    = arduino
-PORT     = /dev/ttyUSB0
+PORT     = /dev/ttyS3
 
 CC       = avr-gcc
 OBJCOPY  = avr-objcopy
 DUDE     = avrdude
 
-CFLAGS   = -Wall -Werror -Os -DF_CPU=16000000UL
+CFLAGS   = -Wall -Werror -Os -DF_CPU=16000000UL -std=gnu99
 PFLAGS   = -b 115200
 
 SRCDIR   = src

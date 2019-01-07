@@ -24,6 +24,7 @@ static void mtrnm_set_period( double ms ) {
 }
 
 void mtrnm_reset( void ) {
+  gl_mtrnm_p.active_bpm = gl_mtrnm_p.start_bpm;
   gl_mtrnm_p.cur_beat = 0;
   gl_mtrnm_p.cur_subdiv = 0;
   gl_mtrnm_p.cur_bar = 0;
@@ -57,7 +58,10 @@ static void mtrnm_calc_next_bpm( ) {
 
 ISR( TIMER1_OVF_vect ) {
 
-  gl_mtrnm_p.beat_ms = bpm2ms( gl_mtrnm_p.active_bpm * gl_mtrnm_p.subdiv );
+  gl_mtrnm_p.beat_ms = bpm2ms( gl_mtrnm_p.active_bpm * gl_mtrnm_p.subdivs );
+  if( gl_mtrnm_p.mode == MTRNM_MODE_CONST ) gl_mtrnm_p.start_bpm = gl_mtrnm_p.active_bpm;
+
+  sound_stop( );
 
   switch( gl_mtrnm_p.state ) {
     case STRONG_BEAT_START:
@@ -78,13 +82,15 @@ ISR( TIMER1_OVF_vect ) {
       break;
 
     case WEAK_BEAT_START:
+      gl_mtrnm_p.cur_beat++;
+
       sound_set_freq( gl_mtrnm_p.freq_weak );
       sound_start( );
 
       led_set( 1, 1 );
 
       // Do not trigger subdiv LED if no subdivision is used
-      if( gl_mtrnm_p.subdiv > 1 )
+      if( gl_mtrnm_p.subdivs > 1 )
         led_set( 2, 1 );
 
       gl_mtrnm_p.cur_subdiv = 1;
@@ -97,7 +103,7 @@ ISR( TIMER1_OVF_vect ) {
       gl_mtrnm_p.cur_subdiv++;
 
       if( gl_mtrnm_p.swing_en ) {
-        if( gl_mtrnm_p.cur_subdiv == 1 || gl_mtrnm_p.cur_subdiv == gl_mtrnm_p.subdiv ) {
+        if( gl_mtrnm_p.cur_subdiv == 1 || gl_mtrnm_p.cur_subdiv == gl_mtrnm_p.subdivs ) {
 
           sound_set_freq( gl_mtrnm_p.freq_subdiv );
           sound_start( );
@@ -125,16 +131,13 @@ ISR( TIMER1_OVF_vect ) {
 
       mtrnm_set_period( gl_mtrnm_p.beat_ms - gl_mtrnm_p.beep_ms );
 
-      if( gl_mtrnm_p.subdiv > 1 && gl_mtrnm_p.cur_subdiv < gl_mtrnm_p.subdiv ) {
+      if( gl_mtrnm_p.subdivs > 1 && gl_mtrnm_p.cur_subdiv < gl_mtrnm_p.subdivs ) {
         gl_mtrnm_p.state = SUBDIV_BEAT_START;
-
       }
-      else if( gl_mtrnm_p.cur_beat == gl_mtrnm_p.beats ) {
-        gl_mtrnm_p.cur_beat = 1;
+      else if( gl_mtrnm_p.cur_beat >= gl_mtrnm_p.beats ) {
         gl_mtrnm_p.state = STRONG_BEAT_START;
       }
       else {
-        gl_mtrnm_p.cur_beat++;
         gl_mtrnm_p.state = WEAK_BEAT_START;
       }
       break;
