@@ -1,6 +1,8 @@
 #include "controls.h"
 #include <util/delay.h>
 
+static int8_t check_enc_moved( void );
+
 void controls_init( void ) {
   // Button0
   DDRD &= ~( _BV( PD2 ) );
@@ -22,6 +24,8 @@ void controls_init( void ) {
   // Pin change interrupts masks
   PCMSK0 |= _BV( PCINT0 ) | _BV( PCINT1 ) | _BV( PCINT4 ); // encoder
   PCMSK2 |= _BV( PCINT23 ); // button1
+
+  check_enc_moved( );
 }
 
 static int8_t enc_state = 0;
@@ -61,7 +65,7 @@ ISR( PCINT0_vect ) {
       enc_btn_check ? gl_ctrl_p.ctrl_enc_a_btn_clbk( ) : gl_ctrl_p.ctrl_enc_a_clbk( ); // right
     }
     if( enc_state == -1 ) {
-      enc_btn_check ? gl_ctrl_p.ctrl_enc_b_btn_clbk( ) : gl_ctrl_p.ctrl_enc_b_clbk( ); // right
+      enc_btn_check ? gl_ctrl_p.ctrl_enc_b_btn_clbk( ) : gl_ctrl_p.ctrl_enc_b_clbk( ); // left
     }
     enc_state = 0;
     enc_rotated = 1 && enc_btn_check;
@@ -75,8 +79,8 @@ ISR( PCINT0_vect ) {
 // Encoder button interrupt
 ISR( PCINT2_vect ) {
   if( check_enc_btn_release( ) ) {
-    if( !enc_rotated ) gl_ctrl_p.ctrl_enc_btn_clbk( );
-    else enc_rotated = 0;
+    if( enc_rotated ) enc_rotated = 0;
+    else gl_ctrl_p.ctrl_enc_btn_clbk( );
   }
 
   //_delay_ms( 2000 );
