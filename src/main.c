@@ -14,11 +14,9 @@
 struct mtrnm_s gl_mtrnm_p = {0};
 struct ctrl_s gl_ctrl_p = {0};
 
-uint64_t balls = 0;
 void nothing( void ) {
   return;
 }
-
 
 int main( void ) {
   cli( );
@@ -47,14 +45,14 @@ int main( void ) {
   gl_mtrnm_p.freq_weak = 1661;
   gl_mtrnm_p.freq_subdiv = 440;
 
-  gl_mtrnm_p.subdivs = 4; // 8 max
+  gl_mtrnm_p.subdivs = 1;
 
-  gl_mtrnm_p.swing_en = 0; // subdiv must be odd
+  gl_mtrnm_p.swing_en = 0;
   gl_mtrnm_p.accent_en = 1;
 
   gl_mtrnm_p.beats = 4;
 
-  gl_mtrnm_p.target_bpm = MTRNM_MAX_BPM;
+  gl_mtrnm_p.target_bpm = 260;
   gl_mtrnm_p.start_bpm = gl_mtrnm_p.active_bpm = 120;
 
   gl_mtrnm_p.inc_bar = 1;
@@ -62,17 +60,19 @@ int main( void ) {
 
   gl_mtrnm_p.mode = MTRNM_MODE_CONST;
 
-timer_start( );
   sei( );
 
+  timer_start( );
+
   while( 1 ) {
+#if 0
     menu_tick( );
-    /*
+#else
     char t[4];
-    dig_itoa16(t, (uint16_t)(timer_get_ms( )) );
+    dig_itoa16(t, (uint16_t)(timer_get_ms( ) / 1000) );
     display_set_digs( t, 4 );
     display_tick( );
-    */
+#endif 
   }
 
   return 0;

@@ -21,9 +21,9 @@ void timer_stop( void ) {
 }
 
 uint64_t timer_get_us( void ) {
-  return (uint64_t)round( ticks / ( TIMER_TICKS_PER_SEC * 1000 ) );
+  return (uint64_t)round( ticks / ( TIMER_TICKS_PER_SEC / 1e6 ) );
 }
 
 uint64_t timer_get_ms( void ) {
-  return (uint64_t)round( ticks / TIMER_TICKS_PER_SEC );
+  return (uint64_t)round( ticks / ( TIMER_TICKS_PER_SEC / 1e3 ) );
 }

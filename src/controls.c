@@ -34,7 +34,8 @@ static uint8_t enc_a = 0;
 static uint8_t enc_b = 0;
 
 static int8_t enc_btn_check = 0;
-static uint8_t enc_rotated = 0;
+
+static uint8_t enc_rot_check = 0; // indicate that encoder was turned while being pressed
 
 // Encoder rotation check
 static int8_t check_enc_moved( void ) {
@@ -68,7 +69,7 @@ ISR( PCINT0_vect ) {
       enc_btn_check ? gl_ctrl_p.ctrl_enc_b_btn_clbk( ) : gl_ctrl_p.ctrl_enc_b_clbk( ); // left
     }
     enc_state = 0;
-    enc_rotated = 1 && enc_btn_check;
+    enc_rot_check = enc_btn_check;
   }
 
   if( PINB & _BV( PINB4 ) ) {
@@ -79,13 +80,14 @@ ISR( PCINT0_vect ) {
 // Encoder button interrupt
 ISR( PCINT2_vect ) {
   if( check_enc_btn_release( ) ) {
-    if( enc_rotated ) enc_rotated = 0;
+    if( enc_rot_check ) enc_rot_check = 0;
     else gl_ctrl_p.ctrl_enc_btn_clbk( );
   }
 
   //_delay_ms( 2000 );
   //gl_ctrl_p.ctrl_enc_btn_clbk( );
 }
+
 // Button0 interrupt
 ISR( INT0_vect ) {
   gl_ctrl_p.ctrl_btn0_clbk( );
