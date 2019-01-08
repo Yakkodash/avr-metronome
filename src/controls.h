@@ -13,6 +13,9 @@ extern struct ctrl_s {
 
   void (*ctrl_btn0_clbk)(void);
   void (*ctrl_btn1_clbk)(void);
+
+  void (*ctrl_swt_on_clkb)(void); // switch callback
+  void (*ctrl_swt_off_clkb)(void); // switch callback
 } gl_ctrl_p;
 
 void controls_init( void );

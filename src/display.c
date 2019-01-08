@@ -26,8 +26,12 @@ static void display_set_digit( uint8_t dig_num ) {
 void display_set_digs( char *data, uint8_t len ) {
   uint8_t c, j = 0;
 
+  for( uint8_t i = 0; i < DIG_NUM; i++ ) {
+    display_buf[i] = ' ';
+  }
+
   for( uint8_t i = 0; i < len; i++ ) {
-    if( data[i+1] == '.' && data[i] != '.' ) {
+    if( data[i+1] == '.' && data[i] != '.' && i+1 < len ) {
       c = char2segment( data[i] ) | char2segment( '.' );
       i++;
     } else {

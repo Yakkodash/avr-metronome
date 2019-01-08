@@ -12,6 +12,10 @@ void mtrnm_start( void ) {
 }
 
 void mtrnm_stop( void ) {
+  led_set( 0, 0 );
+  led_set( 1, 0 );
+  led_set( 2, 0 );
+  sound_stop( );
   TCCR1B = 0;
 }
 
@@ -23,49 +27,71 @@ static void mtrnm_set_period( double ms ) {
   TCNT1 = 65535 - ms * F_CPU / 1024 / 1000; // set output compare register
 }
 
+void mtrnm_change_mode( mtrnm_mode_t mode ) {
+  if( mode == MTRNM_MODE_CONST ) {
+    gl_mtrnm_p.active_bpm = gl_mtrnm_p.start_bpm;
+  }
+  if( mode == MTRNM_MODE_PROG ) {
+    gl_mtrnm_p.start_bpm = gl_mtrnm_p.active_bpm;
+  }
+  gl_mtrnm_p.mode = mode;
+}
+
 void mtrnm_reset( void ) {
+  mtrnm_stop( );
   gl_mtrnm_p.active_bpm = gl_mtrnm_p.start_bpm;
   gl_mtrnm_p.cur_beat = 0;
   gl_mtrnm_p.cur_subdiv = 0;
   gl_mtrnm_p.cur_bar = 0;
   gl_mtrnm_p.state = STRONG_BEAT_START;
-  mtrnm_stop( );
+
+  if( gl_mtrnm_p.cntdwn_en && gl_mtrnm_p.mode == MTRNM_MODE_PROG ) {
+    gl_mtrnm_p.cntdwn_en = 1;
+    gl_mtrnm_p.cur_cntdwn = gl_mtrnm_p.beats+1;
+  }
+
   mtrnm_start( );
 }
 
 static void mtrnm_calc_next_bpm( ) {
 
-  if( gl_mtrnm_p.mode == MTRNM_MODE_PROG ) {
-
-    if( gl_mtrnm_p.cur_bar % gl_mtrnm_p.inc_bar == 0 && gl_mtrnm_p.cur_bar ) {
-      if( gl_mtrnm_p.active_bpm > gl_mtrnm_p.target_bpm ) {
-        gl_mtrnm_p.active_bpm -= gl_mtrnm_p.inc_bpm;
-        if( gl_mtrnm_p.active_bpm < gl_mtrnm_p.target_bpm ) gl_mtrnm_p.active_bpm = gl_mtrnm_p.target_bpm;
-      }
-
-      else if( gl_mtrnm_p.active_bpm < gl_mtrnm_p.target_bpm ) {
-        gl_mtrnm_p.active_bpm += gl_mtrnm_p.inc_bpm;
-        if( gl_mtrnm_p.active_bpm > gl_mtrnm_p.target_bpm ) gl_mtrnm_p.active_bpm = gl_mtrnm_p.target_bpm;
-      }
-
-      gl_mtrnm_p.cur_bar = 0;
-
+  if( gl_mtrnm_p.cur_bar % gl_mtrnm_p.inc_bar == 0 && gl_mtrnm_p.cur_bar ) {
+    if( gl_mtrnm_p.active_bpm > gl_mtrnm_p.target_bpm ) {
+      gl_mtrnm_p.active_bpm -= gl_mtrnm_p.inc_bpm;
+      if( gl_mtrnm_p.active_bpm < gl_mtrnm_p.target_bpm ) gl_mtrnm_p.active_bpm = gl_mtrnm_p.target_bpm;
     }
+
+    else if( gl_mtrnm_p.active_bpm < gl_mtrnm_p.target_bpm ) {
+      gl_mtrnm_p.active_bpm += gl_mtrnm_p.inc_bpm;
+      if( gl_mtrnm_p.active_bpm > gl_mtrnm_p.target_bpm ) gl_mtrnm_p.active_bpm = gl_mtrnm_p.target_bpm;
+    }
+
+    gl_mtrnm_p.cur_bar = 0;
   }
 
   gl_mtrnm_p.cur_bar++;
+
 }
 
 ISR( TIMER1_OVF_vect ) {
 
-  gl_mtrnm_p.beat_ms = bpm2ms( gl_mtrnm_p.active_bpm * gl_mtrnm_p.subdivs );
-  if( gl_mtrnm_p.mode == MTRNM_MODE_CONST ) gl_mtrnm_p.start_bpm = gl_mtrnm_p.active_bpm;
-
   sound_stop( );
+
+  if( gl_mtrnm_p.mode == MTRNM_MODE_CONST) gl_mtrnm_p.cur_cntdwn = 0;
+  if( gl_mtrnm_p.cur_cntdwn && gl_mtrnm_p.state != BEAT_END ) {
+    gl_mtrnm_p.beat_ms = bpm2ms( gl_mtrnm_p.start_bpm  );
+    gl_mtrnm_p.state = STRONG_BEAT_START;
+    gl_mtrnm_p.cur_cntdwn--;
+  } else if( !gl_mtrnm_p.cur_cntdwn ) {
+    gl_mtrnm_p.beat_ms = bpm2ms( gl_mtrnm_p.active_bpm * gl_mtrnm_p.subdivs );
+  }
 
   switch( gl_mtrnm_p.state ) {
     case STRONG_BEAT_START:
-      mtrnm_calc_next_bpm( );
+      if( !gl_mtrnm_p.cur_cntdwn ) {
+        if( gl_mtrnm_p.mode == MTRNM_MODE_PROG )
+          mtrnm_calc_next_bpm( );
+      }
 
       sound_set_freq( gl_mtrnm_p.accent_en ? gl_mtrnm_p.freq_strong : gl_mtrnm_p.freq_weak );
       sound_start( );

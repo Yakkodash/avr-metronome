@@ -1,10 +1,36 @@
 // Setting
-void menu_bpm_inc( void ) {
+void menu_active_bpm_inc( void ) {
   if( gl_mtrnm_p.active_bpm < MTRNM_MAX_BPM ) gl_mtrnm_p.active_bpm++;
+  //if( gl_mtrnm_p.start_bpm < MTRNM_MAX_BPM ) gl_mtrnm_p.start_bpm++;
 }
 
-void menu_bpm_dec( void ) {
+void menu_active_bpm_dec( void ) {
   if( gl_mtrnm_p.active_bpm > MTRNM_MIN_BPM ) gl_mtrnm_p.active_bpm--;
+  //if( gl_mtrnm_p.start_bpm < MTRNM_MAX_BPM ) gl_mtrnm_p.start_bpm++;
+}
+
+void menu_inc_bpm_inc( void ) {
+  if( gl_mtrnm_p.inc_bpm < MTRNM_MAX_BPM ) gl_mtrnm_p.inc_bpm++;
+}
+
+void menu_inc_bpm_dec( void ) {
+  if( gl_mtrnm_p.inc_bpm > 1 ) gl_mtrnm_p.inc_bpm--;
+}
+
+void menu_inc_bar_inc( void ) {
+  if( gl_mtrnm_p.inc_bar < MTRNM_MAX_BEATS ) gl_mtrnm_p.inc_bar++;
+}
+
+void menu_inc_bar_dec( void ) {
+  if( gl_mtrnm_p.inc_bar > MTRNM_MIN_BEATS ) gl_mtrnm_p.inc_bar--;
+}
+
+void menu_target_bpm_inc( void ) {
+  if( gl_mtrnm_p.target_bpm < MTRNM_MAX_BPM ) gl_mtrnm_p.target_bpm++;
+}
+
+void menu_target_bpm_dec( void ) {
+  if( gl_mtrnm_p.target_bpm > MTRNM_MIN_BPM ) gl_mtrnm_p.target_bpm--;
 }
 
 void menu_beat_inc( void ) {
@@ -25,13 +51,15 @@ void menu_subdivs_dec( void ) {
 
 void menu_toggle_accent( void ) {
   gl_mtrnm_p.accent_en = gl_mtrnm_p.accent_en ? 0 : 1;
-
 }
 
 void menu_toggle_swing( void ) {
   gl_mtrnm_p.swing_en = gl_mtrnm_p.swing_en ? 0 : 1;
 }
 
+void menu_toggle_cntdwn( void ) {
+  gl_mtrnm_p.cntdwn_en = gl_mtrnm_p.cntdwn_en ? 0 : 1;
+}
 // Printing
 void menu_print_tempo( void ) {
 
@@ -114,3 +142,125 @@ void menu_print_swing( void ) {
 
   output_len = 4;
 }
+
+void menu_print_cntdw_prog( void ) {
+  dig_itoa16( dig_buf, gl_mtrnm_p.cur_cntdwn );
+  output_buf[0] = '-';
+  output_buf[1] = dig_buf[1];
+  output_buf[2] = dig_buf[2];
+  output_buf[3] = dig_buf[3];
+
+  output_len = 4;
+}
+
+void menu_print_start_prog( void ) {
+
+  if( gl_mtrnm_p.cur_cntdwn ) {
+    menu_print_cntdw_prog( ); 
+    return;
+  }
+
+  dig_itoa16( dig_buf, gl_mtrnm_p.active_bpm );
+  output_buf[0] = dig_buf[1];
+  output_buf[1] = dig_buf[2];
+  output_buf[2] = dig_buf[3];
+  output_buf[3] = '-';
+
+  output_len = 4;
+}
+
+void menu_print_end_prog( void ) {
+
+  if( gl_mtrnm_p.cur_cntdwn ) {
+    menu_print_cntdw_prog( ); 
+    return;
+  }
+
+  dig_itoa16( dig_buf, gl_mtrnm_p.target_bpm );
+  output_buf[0] = '-';
+  output_buf[1] = dig_buf[1];
+  output_buf[2] = dig_buf[2];
+  output_buf[3] = dig_buf[3];
+
+  output_len = 4;
+}
+
+void menu_print_inc_bpm_prog( void ) {
+
+  if( gl_mtrnm_p.cur_cntdwn ) {
+    menu_print_cntdw_prog( ); 
+    return;
+  }
+
+  if( gl_mtrnm_p.inc_bpm < 99 ) {
+    output_buf[0] = '-'; // bar
+
+    dig_itoa16( dig_buf, gl_mtrnm_p.inc_bpm );
+    output_buf[1] = dig_buf[2];
+    output_buf[2] = dig_buf[3];
+
+    output_buf[3] = '-';
+
+    output_len = 4;
+  } else {
+
+    dig_itoa16( dig_buf, gl_mtrnm_p.inc_bpm );
+    output_buf[0] = ' ';
+    output_buf[1] = dig_buf[1];
+    output_buf[2] = dig_buf[2];
+    output_buf[3] = dig_buf[3];
+
+  }
+}
+
+void menu_print_inc_bar_prog( void ) {
+
+  if( gl_mtrnm_p.cur_cntdwn ) {
+    menu_print_cntdw_prog( ); 
+    return;
+  }
+
+  if( gl_mtrnm_p.inc_bar > 9 || gl_mtrnm_p.cur_bar > 9 ) {
+    dig_itoa16( dig_buf, gl_mtrnm_p.inc_bar );
+    output_buf[0] = dig_buf[2];
+    output_buf[1] = dig_buf[3];
+    output_buf[2] = '.';
+
+    dig_itoa16( dig_buf, gl_mtrnm_p.cur_bar );
+    output_buf[3] = dig_buf[2];
+    output_buf[4] = dig_buf[3];
+
+    output_len = 5;
+  } else {
+    output_buf[0] = '{'; // like a bar on a music sheet
+
+    dig_itoa16( dig_buf, gl_mtrnm_p.inc_bar );
+    output_buf[1] = dig_buf[3];
+    output_buf[2] = '.';
+
+    dig_itoa16( dig_buf, gl_mtrnm_p.cur_bar );
+    output_buf[3] = dig_buf[3];
+    output_buf[4] = '}';
+
+    output_len = 5;
+  }
+}
+
+void menu_print_cntdw_en_prog( void ) {
+
+  if( gl_mtrnm_p.cur_cntdwn ) {
+    menu_print_cntdw_prog( ); 
+    return;
+  }
+
+  output_buf[0] = 'C';
+  output_buf[1] = 'n';
+  output_buf[2] = 't';
+  output_buf[3] = '.';
+
+  dig_itoa16( dig_buf, gl_mtrnm_p.cntdwn_en );
+  output_buf[4] = dig_buf[3];
+
+  output_len = 5;
+}
+

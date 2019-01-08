@@ -14,9 +14,8 @@
 #define MTRNM_MAX_BEEP_MS 20
 #define MTRNM_MIN_BEEP_MS 7
 
-void mtrnm_start( void );
-void mtrnm_stop( void );
-void mtrnm_reset( void );
+#define MTRNM_MAX_INC_BAR 99
+#define MTRNM_MIN_INC_BAR 1
 
 typedef enum {
   STRONG_BEAT_START,
@@ -30,12 +29,16 @@ typedef enum {
   MTRNM_MODE_PROG
 } mtrnm_mode_t;
 
-extern struct mtrnm_s {
+struct mtrnm_p_s {
 
   mtrnm_fsm_t   state;
   mtrnm_mode_t  mode;
 
-  // For progressive mode
+  uint8_t   cur_bar;
+  uint8_t   cur_beat;
+  uint8_t   cur_subdiv;
+  uint8_t   cur_cntdwn;
+
   uint16_t  target_bpm;
   uint16_t  active_bpm;
   uint16_t  start_bpm;
@@ -51,15 +54,16 @@ extern struct mtrnm_s {
   uint16_t  freq_strong;
   uint16_t  freq_subdiv;
 
-  uint8_t   cur_bar;
-  uint8_t   cur_beat;
-  uint8_t   cur_subdiv;
-
   uint8_t   swing_en;
   uint8_t   accent_en;
+  uint8_t   cntdwn_en;
 
   uint8_t   inc_bar; // bar increment
   uint16_t  inc_bpm; // bpm increment
 
 } gl_mtrnm_p;
 
+void mtrnm_change_mode( mtrnm_mode_t mode );
+void mtrnm_start( void );
+void mtrnm_stop( void );
+void mtrnm_reset( void );

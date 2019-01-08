@@ -1,7 +1,14 @@
 #include "controls.h"
+#include "metronome.h"
 #include <util/delay.h>
 
+#define CTRL_ENC_BTN_PORT_DIR
+#define CTRL_ENC_BTN_PORT
+#define CTRL_ENC_BTN_PIN
+#define CTRL_ENC_BTN_PIN
+
 static int8_t check_enc_moved( void );
+void switch_handle( void );
 
 void controls_init( void ) {
   // Button0
@@ -10,22 +17,28 @@ void controls_init( void ) {
   EIMSK |= _BV( INT0 );
   EICRA |= _BV( ISC01 ) | _BV( ISC00 ); // rising edge
 
-  // Button1
+  // Encoder button
   DDRD &= ~( _BV( PD7 ) );
   PORTD |= _BV( PD7 );
 
-  // Encoder
+  // Switch
+  DDRC &= ~( _BV( PC4 ) );
+  PORTC |= _BV( PC4 );
+
+  // Encoder and button1
   DDRB &= ~( _BV( PB4 ) | _BV( PB0 ) | _BV( PB1 ) ); // 0, 1 -- rotation, 4 -- button
   PORTB |= _BV( PB4 ) | _BV( PB0 ) | _BV( PB1 );
 
   // Enable pin change interrupts for encoder and button1
-  PCICR |= _BV( PCIE0 ) | _BV( PCIE2 ); // enable pin change interrupt
+  PCICR |= _BV( PCIE0 ) | _BV( PCIE1 ) | _BV( PCIE2 ); // enable pin change interrupt
 
   // Pin change interrupts masks
-  PCMSK0 |= _BV( PCINT0 ) | _BV( PCINT1 ) | _BV( PCINT4 ); // encoder
-  PCMSK2 |= _BV( PCINT23 ); // button1
+  PCMSK0 |= _BV( PCINT0 ) | _BV( PCINT1 ) | _BV( PCINT4 ); // encoder and button1
+  PCMSK1 |= _BV( PCINT12 );
+  PCMSK2 |= _BV( PCINT23 ); // encoder button
 
   check_enc_moved( );
+  switch_handle( );
 }
 
 static int8_t enc_state = 0;
@@ -77,15 +90,21 @@ ISR( PCINT0_vect ) {
   }
 }
 
+void switch_handle( void ) {
+  if( PINC & _BV( PINC4 ) ) gl_ctrl_p.ctrl_swt_on_clkb( );
+  else gl_ctrl_p.ctrl_swt_off_clkb( );
+}
+
+ISR( PCINT1_vect ) {
+  switch_handle( );
+}
+
 // Encoder button interrupt
 ISR( PCINT2_vect ) {
   if( check_enc_btn_release( ) ) {
     if( enc_rot_check ) enc_rot_check = 0;
     else gl_ctrl_p.ctrl_enc_btn_clbk( );
   }
-
-  //_delay_ms( 2000 );
-  //gl_ctrl_p.ctrl_enc_btn_clbk( );
 }
 
 // Button0 interrupt
