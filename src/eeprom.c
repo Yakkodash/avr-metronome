@@ -15,7 +15,7 @@ static uint8_t  e_inc_bar EEMEM;
 static uint8_t  e_cntdwn_en EEMEM;
 
 void eeprom_save_mtrnm_set( void ) {
-  eeprom_write_word( &e_bpm, gl_mtrnm_p.active_bpm );
+  eeprom_write_word( &e_bpm, gl_mtrnm_p.start_bpm );
   eeprom_write_word( &e_target_bpm, gl_mtrnm_p.target_bpm );
 
   eeprom_write_byte( &e_subdivs, gl_mtrnm_p.subdivs );

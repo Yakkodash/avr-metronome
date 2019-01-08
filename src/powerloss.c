@@ -16,7 +16,7 @@ void powerloss_detect_init( void (*clbk)(void) ) {
 static uint16_t cur_adc = 0;
 void powerloss_detect_tick( void ) {
 
-  cur_adc = adc_read( 5 );
+  cur_adc = adc_read( PWRLOSS_DET_ADC_CHAN );
   if( cur_adc < PWRLOSS_THRESH_LOW ) {
     PWRLOSS_DET_PORT_DIR |= _BV( PWRLOSS_DET_INPUT );
     PWRLOSS_DET_PORT |= ( _BV( PWRLOSS_DET_INPUT ) );

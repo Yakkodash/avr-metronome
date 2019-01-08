@@ -31,9 +31,6 @@ void mtrnm_change_mode( mtrnm_mode_t mode ) {
   if( mode == MTRNM_MODE_CONST ) {
     gl_mtrnm_p.active_bpm = gl_mtrnm_p.start_bpm;
   }
-  if( mode == MTRNM_MODE_PROG ) {
-    gl_mtrnm_p.start_bpm = gl_mtrnm_p.active_bpm;
-  }
   gl_mtrnm_p.mode = mode;
 }
 
@@ -77,14 +74,17 @@ ISR( TIMER1_OVF_vect ) {
 
   sound_stop( );
 
-  if( gl_mtrnm_p.mode == MTRNM_MODE_CONST) gl_mtrnm_p.cur_cntdwn = 0;
+  if( gl_mtrnm_p.mode == MTRNM_MODE_CONST ) gl_mtrnm_p.cur_cntdwn = 0;
   if( gl_mtrnm_p.cur_cntdwn && gl_mtrnm_p.state != BEAT_END ) {
     gl_mtrnm_p.beat_ms = bpm2ms( gl_mtrnm_p.start_bpm  );
     gl_mtrnm_p.state = STRONG_BEAT_START;
     gl_mtrnm_p.cur_cntdwn--;
-  } else if( !gl_mtrnm_p.cur_cntdwn ) {
+  } else {
     gl_mtrnm_p.beat_ms = bpm2ms( gl_mtrnm_p.active_bpm * gl_mtrnm_p.subdivs );
   }
+
+  if( gl_mtrnm_p.mode == MTRNM_MODE_CONST && gl_mtrnm_p.state == BEAT_END ) 
+    gl_mtrnm_p.start_bpm = gl_mtrnm_p.active_bpm;
 
   switch( gl_mtrnm_p.state ) {
     case STRONG_BEAT_START:

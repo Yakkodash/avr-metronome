@@ -106,9 +106,9 @@ void menu_print_beats( void ) {
 
 void menu_print_subdivs( void ) {
 
-  output_buf[0] = 'd'; // division
-  output_buf[1] = '.';
-  output_buf[2] = ' ';
+  output_buf[0] = 'S'; // division
+  output_buf[1] = 'd';
+  output_buf[2] = '.';
 
   dig_itoa16( dig_buf, gl_mtrnm_p.subdivs );
   output_buf[3] = dig_buf[3];
