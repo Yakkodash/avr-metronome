@@ -17,4 +17,3 @@ void dig_itoa16( char *dst, uint16_t val ) {
     dst[DIG_NUM-1-i] = val < pow16( 10, i ) ? ' ' : '0' + ( val / ( pow16( 10, i ) ) ) % 10;
   }
 }
-

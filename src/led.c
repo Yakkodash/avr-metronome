@@ -14,13 +14,9 @@ void led_deinit( void ) {
 }
 
 void led_set( uint8_t led_num, uint8_t state ) {
-
   if( state ) {
     LED_PORT |= _BV( leds[led_num] );
   } else {
     LED_PORT &= ~(_BV( leds[led_num] ));
   }
-
 }
-
-

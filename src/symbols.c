@@ -104,4 +104,3 @@ static const uint8_t symbols[96] = {
 uint8_t char2segment( uint8_t c ) {
   return symbols[ c - 32 ];
 }
-

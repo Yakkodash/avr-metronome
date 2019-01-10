@@ -1,6 +1,6 @@
 #include "controls.h"
 #include "metronome.h"
-#include <util/delay.h>
+#include "timer.h"
 
 #define CTRL_ENC_BTN_PORT_DIR
 #define CTRL_ENC_BTN_PORT
@@ -86,8 +86,16 @@ ISR( PCINT0_vect ) {
   }
 
   if( PINB & _BV( PINB4 ) ) {
-    gl_ctrl_p.ctrl_btn1_clbk( );
+      gl_ctrl_p.ctrl_btn1_short_clbk( );
+  //  gl_ctrl_p.btn_tim = timer_get_ms( );
+  //  gl_ctrl_p.btn_pressed = 1;
+  } else {
+  //  if( timer_get_ms( ) - gl_ctrl_p.btn_tim )
+  //  gl_ctrl_p.btn_pressed = 0;
   }
+  /*if( PINB & _BV( PINB4 ) ) {
+    gl_ctrl_p.ctrl_btn1_clbk( );
+  }*/
 }
 
 void switch_handle( void ) {
@@ -111,5 +119,3 @@ ISR( PCINT2_vect ) {
 ISR( INT0_vect ) {
   gl_ctrl_p.ctrl_btn0_clbk( );
 }	
-
-

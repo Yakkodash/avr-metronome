@@ -27,4 +27,3 @@ void spi_transmit( uint8_t val ) {
 
   spi_commit( );
 }
-

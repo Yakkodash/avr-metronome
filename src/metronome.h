@@ -2,6 +2,8 @@
 
 #include <stdint.h>
 
+#include "notes.h"
+
 #define MTRNM_MAX_BPM 500
 #define MTRNM_MIN_BPM 15
 
@@ -17,6 +19,12 @@
 #define MTRNM_MAX_INC_BAR 99
 #define MTRNM_MIN_INC_BAR 1
 
+#define DFLT_LED_EN       1
+#define DFLT_BEEP_MS      7
+#define DFLT_STRONG_NOTE  G7
+#define DFLT_WEAK_NOTE    Ab6
+#define DFLT_SUBDIV_NOTE  A4
+
 typedef enum {
   STRONG_BEAT_START,
   WEAK_BEAT_START,
@@ -29,7 +37,7 @@ typedef enum {
   MTRNM_MODE_PROG
 } mtrnm_mode_t;
 
-struct mtrnm_p_s {
+extern volatile struct mtrnm_p_s {
 
   mtrnm_fsm_t   state;
   mtrnm_mode_t  mode;
@@ -50,13 +58,14 @@ struct mtrnm_p_s {
 
   uint8_t   beep_ms;
 
-  uint16_t  freq_weak;
-  uint16_t  freq_strong;
-  uint16_t  freq_subdiv;
+  note_t    note_weak;
+  note_t    note_strong;
+  note_t    note_subdiv;
 
   uint8_t   swing_en;
   uint8_t   accent_en;
   uint8_t   cntdwn_en;
+  uint8_t   led_en;
 
   uint8_t   inc_bar; // bar increment
   uint16_t  inc_bpm; // bpm increment
@@ -66,4 +75,7 @@ struct mtrnm_p_s {
 void mtrnm_change_mode( mtrnm_mode_t mode );
 void mtrnm_start( void );
 void mtrnm_stop( void );
-void mtrnm_reset( void );
+
+void mtrnm_reset_const( void );
+void mtrnm_reset_prog( void );
+void mtrnm_reset_sett( void );

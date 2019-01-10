@@ -26,3 +26,6 @@ int16_t sound_set_freq( uint16_t freq ) {
 
 }
 
+void sound_set_note( note_t note ) {
+  sound_set_freq( note2freq( note ) );
+}

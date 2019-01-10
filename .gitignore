@@ -2,3 +2,6 @@
 /obj
 src/.*.sw?
 .vscode
+tags
+*.bak
+/rescue-backup/
