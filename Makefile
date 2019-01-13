@@ -1,24 +1,26 @@
 .SUFFIXES:
 
-TARGET   = metronome
-MCU      = atmega328p
-PROGR    = arduino
-PORT     = /dev/ttyS3
+TARGET  = metronome
+MCU     = atmega328p
+PROGR   = avrisp
+PORT    = /dev/ttyS3
 
-CC       = avr-gcc
-OBJCOPY  = avr-objcopy
-DUDE     = avrdude
+CC      = avr-gcc
+OBJCOPY = avr-objcopy
+DUDE    = avrdude
 
-CFLAGS   = -Wall -Werror -Os -DF_CPU=16000000UL -std=gnu99
-PFLAGS   = -b 115200
+CFLAGS  = -Werror -Os -DF_CPU=16000000UL -std=gnu99
+PFLAGS  = -b 19200
+FUSES		= -U lfuse:w:0x7F:m
+#FUSES		= -U lfuse:w:0x62:m
 
-SRCDIR   = src
-OBJDIR   = obj
-BINDIR   = bin
+SRCDIR  = src
+OBJDIR  = obj
+BINDIR  = bin
 
-SOURCES  := $(wildcard $(SRCDIR)/*.c)
-HEADERS  := $(wildcard $(SRCDIR)/*.h)
-OBJECTS  := $(SOURCES:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
+SOURCES := $(wildcard $(SRCDIR)/*.c)
+HEADERS := $(wildcard $(SRCDIR)/*.h)
+OBJECTS := $(SOURCES:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 
 .PHONY: all
 all: $(BINDIR)/$(TARGET).hex
@@ -37,7 +39,7 @@ $(OBJDIR) $(BINDIR):
 
 .PHONY: flash
 flash: $(BINDIR)/$(TARGET).hex
-	$(DUDE) -c $(PROGR) -p $(MCU) -P $(PORT) $(PFLAGS) -U flash:w:$<
+	$(DUDE) -c $(PROGR) -p $(MCU) -P $(PORT) $(PFLAGS) $(FUSES) -U flash:w:$<
 
 .PHONY: clean
 clean:

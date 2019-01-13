@@ -86,13 +86,15 @@ int main( void ) {
 
   eeprom_load_mtrnm_set( );
 
-  init_ctrl_clbks( );
-  controls_init( ); // because of switch' initial state
+  //init_ctrl_clbks( );
+  //controls_init( );
 
   sei( );
 
   while( 1 ) { // happens about every 12-13ms
+#ifndef DISABLE_EEPROM
     if( powerloss_detect_tick( ) ) break;
+#endif
     menu_tick( );
     //if( timer_get_ms( ) - gl_ctrl_p.btn_tim >= 2000 && gl_ctrl_p.btn_pressed ) 
     //  gl_ctrl_p.ctrl_btn1_long_clbk( );

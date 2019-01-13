@@ -19,15 +19,15 @@ void controls_init( void ) {
 
   // Encoder button
   DDRD &= ~( _BV( PD7 ) );
-  PORTD |= _BV( PD7 );
+  PORTD &= ~( _BV( PD7 ) );
 
   // Switch
   DDRC &= ~( _BV( PC4 ) );
-  PORTC |= _BV( PC4 );
+  PORTC &= ~( _BV( PC4 ) );
 
   // Encoder and button1
   DDRB &= ~( _BV( PB4 ) | _BV( PB0 ) | _BV( PB1 ) ); // 0, 1 -- rotation, 4 -- button
-  PORTB |= _BV( PB4 ) | _BV( PB0 ) | _BV( PB1 );
+  PORTB &= ~( _BV( PB4 ) | _BV( PB0 ) | _BV( PB1 ) );
 
   // Enable pin change interrupts for encoder and button1
   PCICR |= _BV( PCIE0 ) | _BV( PCIE1 ) | _BV( PCIE2 ); // enable pin change interrupt
