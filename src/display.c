@@ -17,13 +17,10 @@ void display_init( void ) {
 }
 
 static void display_set_digit( uint8_t dig_num ) {
-  for( uint8_t i = 0; i < DIG_NUM; i++ )
-    DISP_CS_PORT |= _BV( display_digs[i] );
-
-  DISP_CS_PORT &= ~( _BV( display_digs[dig_num] ) );
+  DISP_CS_PORT = ~( _BV( display_digs[dig_num] ) );
 }
 
-void display_set_digs( char *data, uint8_t len ) {
+void display_set_chars( char *data, uint8_t len ) {
   uint8_t c, j = 0;
 
   for( uint8_t i = 0; i < len; i++ ) {

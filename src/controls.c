@@ -2,44 +2,27 @@
 #include "metronome.h"
 #include "timer.h"
 
-#define CTRL_ENC_BTN_PORT_DIR
-#define CTRL_ENC_BTN_PORT
-#define CTRL_ENC_BTN_PIN
-#define CTRL_ENC_BTN_PIN
+#define CTRL_ENC_BTN_PORT_DIR DDRD
+#define CTRL_ENC_BTN_PORT     PORTD
+#define CTRL_ENC_BTN_PIN      PD7
+#define CTRL_ENC_BTN_INPINS   PIND
+#define CTRL_ENC_BTN_PCINT    PCINT23
+#define CTRL_ENC_BTN_PCMSK    PCMSK2
 
-static int8_t check_enc_moved( void );
-void switch_handle( void );
+#define CTRL_ENC_ROT_PORT_DIR DDRB
+#define CTRL_ENC_ROT_PORT     PORTB
+#define CTRL_ENC_ROT_A_PIN    PB0
+#define CTRL_ENC_ROT_B_PIN    PB1
+#define CTRL_ENC_ROT_INPINS   PINB
+#define CTRL_ENC_ROT_A_PCINT  PCINT0
+#define CTRL_ENC_ROT_B_PCINT  PCINT1
+#define CTRL_ENC_ROT_PCMSK    PCMSK0
 
-void controls_init( void ) {
-  // Button0
-  DDRD &= ~( _BV( PD2 ) );
-  PORTD |= _BV( PD2 );
-  EIMSK |= _BV( INT0 );
-  EICRA |= _BV( ISC01 ) | _BV( ISC00 ); // rising edge
-
-  // Encoder button
-  DDRD &= ~( _BV( PD7 ) );
-  PORTD &= ~( _BV( PD7 ) );
-
-  // Switch
-  DDRC &= ~( _BV( PC4 ) );
-  PORTC &= ~( _BV( PC4 ) );
-
-  // Encoder and button1
-  DDRB &= ~( _BV( PB4 ) | _BV( PB0 ) | _BV( PB1 ) ); // 0, 1 -- rotation, 4 -- button
-  PORTB &= ~( _BV( PB4 ) | _BV( PB0 ) | _BV( PB1 ) );
-
-  // Enable pin change interrupts for encoder and button1
-  PCICR |= _BV( PCIE0 ) | _BV( PCIE1 ) | _BV( PCIE2 ); // enable pin change interrupt
-
-  // Pin change interrupts masks
-  PCMSK0 |= _BV( PCINT0 ) | _BV( PCINT1 ) | _BV( PCINT4 ); // encoder and button1
-  PCMSK1 |= _BV( PCINT12 );
-  PCMSK2 |= _BV( PCINT23 ); // encoder button
-
-  check_enc_moved( );
-  switch_handle( );
-}
+#define CTRL_SWT_PORT_DIR DDRC
+#define CTRL_SWT_PORT     PORTC
+#define CTRL_SWT_PIN      PC4
+#define CTRL_SWT_PCINT    PCINT12
+#define CTRL_SWT_PCMSK    PCMSK1
 
 static int8_t enc_state = 0;
 
@@ -50,10 +33,24 @@ static int8_t enc_btn_check = 0;
 
 static uint8_t enc_rot_check = 0; // indicate that encoder was turned while being pressed
 
+// Encoder button check
+static int8_t check_enc_btn_release( void ) {
+  return !( PIND & _BV( PIND7 ) );
+}
+
+static int8_t check_enc_btn_press( void ) {
+  return PIND & _BV( PD7 );
+}
+
+void switch_handle( void ) {
+  if( PINC & _BV( PINC4 ) ) gl_ctrl_p.ctrl_swt_on_clkb( );
+  else gl_ctrl_p.ctrl_swt_off_clkb( );
+}
+
 // Encoder rotation check
 static int8_t check_enc_moved( void ) {
-  enc_a = PINB & _BV( PINB0 );
-  enc_b = PINB & _BV( PINB1 );
+  enc_a = PINB & _BV( PB0 );
+  enc_b = PINB & _BV( PB1 );
 
   if( !enc_a && enc_b ) enc_state = 1; // if falling edge appeared on line A and B is 1 then rotating right
   if( !enc_a && !enc_b ) enc_state = -1;  // if falling edge on line A and B is 0, rotating left
@@ -61,16 +58,64 @@ static int8_t check_enc_moved( void ) {
   return ( enc_state == 1 && !enc_b ) || ( enc_state == -1 && enc_b ); // if A is 1 again, then encoder has moved
 }
 
-// Encoder button check
-static int8_t check_enc_btn_release( void ) {
-  return !( PIND & _BV( PIND7 ) );
+// Encoder button
+static void init_enc_btn( void ) {
+  CTRL_ENC_BTN_PORT_DIR &= ~( _BV( CTRL_ENC_BTN_PIN ) );
+  CTRL_ENC_BTN_PORT |= _BV( CTRL_ENC_BTN_PIN );
+
+  CTRL_ENC_BTN_PCMSK |= _BV( CTRL_ENC_BTN_PCINT ); // encoder button
 }
 
-static int8_t check_enc_btn_press( void ) {
-  return PIND & _BV( PIND7 );
+// Encoder rotation
+static void init_enc_rot( void ) {
+  CTRL_ENC_ROT_PORT_DIR &= ~( _BV( CTRL_ENC_ROT_A_PIN ) | _BV( CTRL_ENC_ROT_B_PIN ) ); // 0, 1 -- rotation, 4 -- button
+  CTRL_ENC_ROT_PORT |= _BV( CTRL_ENC_ROT_A_PIN ) | _BV( CTRL_ENC_ROT_B_PIN );
+
+  CTRL_ENC_ROT_PCMSK |= _BV( CTRL_ENC_ROT_A_PCINT ) | _BV( CTRL_ENC_ROT_B_PCINT ); // encoder and button1
+
+  check_enc_moved( );
 }
 
-// Encoder rotation and button1 interrupt
+// Switch
+static void init_switch( void ) {
+  CTRL_SWT_PORT_DIR &= ~( _BV( CTRL_SWT_PIN ) );
+  CTRL_SWT_PORT |= _BV( CTRL_SWT_PIN );
+
+  CTRL_SWT_PCMSK |= _BV( CTRL_SWT_PCINT ); // switch
+
+  switch_handle( );
+}
+
+// Button0
+static void init_btn0( void ) {
+  DDRD &= ~( _BV( PD2 ) );
+  PORTD |= _BV( PD2 );
+
+  EIMSK |= _BV( INT0 );
+  EICRA |= _BV( ISC01 ) | _BV( ISC00 ); // rising edge
+}
+
+// Button1
+static void init_btn1( void ) {
+  DDRD &= ~( _BV( PD3 ) );
+  PORTD |= _BV( PD3 );
+
+  EIMSK |= _BV( INT1 );
+  //EICRA |= _BV( ISC11 ) | _BV( ISC10 ); // rising edge
+  EICRA |= _BV( ISC11 ); // falling edge
+}
+
+void ctrl_init( void ) {
+  init_btn0( );
+  init_btn1( );
+  init_enc_btn( );
+  init_enc_rot( );
+  init_switch( );
+
+  PCICR |= _BV( PCIE0 ) | _BV( PCIE1 ) | _BV( PCIE2 ); // enable all pin change interrupt vectors
+}
+
+// Encoder rotation interrupt
 ISR( PCINT0_vect ) {
   enc_btn_check = check_enc_btn_press( );
 
@@ -84,23 +129,6 @@ ISR( PCINT0_vect ) {
     enc_state = 0;
     enc_rot_check = enc_btn_check;
   }
-
-  if( PINB & _BV( PINB4 ) ) {
-      gl_ctrl_p.ctrl_btn1_short_clbk( );
-  //  gl_ctrl_p.btn_tim = timer_get_ms( );
-  //  gl_ctrl_p.btn_pressed = 1;
-  } else {
-  //  if( timer_get_ms( ) - gl_ctrl_p.btn_tim )
-  //  gl_ctrl_p.btn_pressed = 0;
-  }
-  /*if( PINB & _BV( PINB4 ) ) {
-    gl_ctrl_p.ctrl_btn1_clbk( );
-  }*/
-}
-
-void switch_handle( void ) {
-  if( PINC & _BV( PINC4 ) ) gl_ctrl_p.ctrl_swt_on_clkb( );
-  else gl_ctrl_p.ctrl_swt_off_clkb( );
 }
 
 ISR( PCINT1_vect ) {
@@ -119,3 +147,9 @@ ISR( PCINT2_vect ) {
 ISR( INT0_vect ) {
   gl_ctrl_p.ctrl_btn0_clbk( );
 }	
+
+// Button1 interrupt
+ISR( INT1_vect ) {
+  gl_ctrl_p.ctrl_btn1_short_clbk( );
+}	
+

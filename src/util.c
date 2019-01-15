@@ -8,12 +8,14 @@ uint16_t pow16( uint16_t x, uint8_t y ) {
 }
 
 void dig_itoa16( char *dst, uint16_t val ) {
+  uint8_t i = 0;
+
   if( val == 0 ) {
     dst[DIG_NUM-1] = '0';
-    return;
+    i++;
   }
 
-  for( uint8_t i = 0; i < DIG_NUM; i++ ) {
+  for( ; i < DIG_NUM; i++ ) {
     dst[DIG_NUM-1-i] = val < pow16( 10, i ) ? ' ' : '0' + ( val / ( pow16( 10, i ) ) ) % 10;
   }
 }

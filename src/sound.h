@@ -9,7 +9,7 @@
 #define SOUND_FREQ_MAX  ( F_CPU / ( 2 * 256 ) ) - 1
 
 #define SOUND_PORT_DIR  DDRD
-#define SOUND_PIN_DIR   PD6
+#define SOUND_PIN       PD6
 
 void sound_init( void );
 

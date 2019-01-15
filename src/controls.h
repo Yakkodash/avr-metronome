@@ -18,9 +18,6 @@ extern volatile struct ctrl_s {
 
   void (*ctrl_swt_on_clkb)(void); // switch callback
   void (*ctrl_swt_off_clkb)(void); // switch callback
-
-  uint32_t btn_tim;
-  uint8_t btn_pressed;
 } gl_ctrl_p;
 
-void controls_init( void );
+void ctrl_init( void );

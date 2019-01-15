@@ -21,6 +21,6 @@ typedef enum {
 static const uint8_t display_digs[DIG_NUM] = { PC0, PC1, PC2, PC3 };
 
 void display_init( void );
-void display_set_digs( char *data, uint8_t len );
+void display_set_chars( char *data, uint8_t len );
 void display_set_mode( disp_mode_t mode );
 void display_tick( void );

@@ -14,57 +14,68 @@
 #include "powerloss.h"
 #include "notes.h"
 
-volatile struct mtrnm_p_s gl_mtrnm_p = {0};
-volatile struct ctrl_s gl_ctrl_p = {0};
+uint16_t pwr_adc_val = 0;
+
 
 static void change_mode_main( void ) {
-  mtrnm_change_mode( MTRNM_MODE_CONST );
   menu_change_menu( MENU_MAIN );
 }
 
 static void change_mode_prog( void ) {
-  mtrnm_change_mode( MTRNM_MODE_PROG );
   menu_change_menu( MENU_PROG );
 }
 
-void nothing( void ) {}
+volatile struct mtrnm_p_s gl_mtrnm_p = {
+  .beep_ms = MTRNM_MIN_BEEP_MS,
 
-static void init_dflt_mtrnm( void ) {
+  .note_strong = G7,
+  .note_weak = Ab6,
+  .note_subdiv = A4,
 
-  gl_mtrnm_p.beep_ms = MTRNM_MIN_BEEP_MS;
+  .beats = 4,
+  .subdivs = 1,
 
-  gl_mtrnm_p.note_strong = G7;
-  gl_mtrnm_p.note_weak = Ab6;
-  gl_mtrnm_p.note_subdiv = A4;
+  .swing_en = 0,
+  .accent_en = 1,
+  .cntdwn_en = 1,
+  .led_en = 1,
 
-  gl_mtrnm_p.beats = 4;
-  gl_mtrnm_p.subdivs = 1;
+  .target_bpm = 260,
+  .start_bpm = 120,
+  .active_bpm = 120,
 
-  gl_mtrnm_p.swing_en = 0;
-  gl_mtrnm_p.accent_en = 1;
-  gl_mtrnm_p.cntdwn_en = 1;
-  gl_mtrnm_p.led_en = 1;
+  .inc_bar = 1,
+  .inc_bpm = 5,
 
-  gl_mtrnm_p.target_bpm = 260;
-  gl_mtrnm_p.start_bpm = gl_mtrnm_p.active_bpm = 120;
+  .mode = MTRNM_MODE_CONST,
+};
 
-  gl_mtrnm_p.inc_bar = 1;
-  gl_mtrnm_p.inc_bpm = 5;
+volatile struct ctrl_s gl_ctrl_p = {
+  .ctrl_enc_a_clbk = NULL,
+  .ctrl_enc_b_clbk = NULL,
+  .ctrl_enc_btn_clbk = menu_forward_item,
 
-  gl_mtrnm_p.mode = MTRNM_MODE_CONST;
+  .ctrl_enc_a_btn_clbk = menu_forward_item,
+  .ctrl_enc_b_btn_clbk = menu_backward_item,
+
+  .ctrl_btn0_clbk = NULL,
+
+  .ctrl_btn1_short_clbk = NULL,
+  .ctrl_btn1_long_clbk = NULL,
+
+  .ctrl_swt_on_clkb = change_mode_main,
+  .ctrl_swt_off_clkb = change_mode_prog,
+};
+
+void powerloss_clbk( void ) {
+  cli( );
+  for( uint8_t i = 0; i < LED_NUM; i++ ) led_set( i, 0 );
+  eeprom_save_mtrnm_set( );
 }
 
-static void init_ctrl_clbks( void ) {
-  gl_ctrl_p.ctrl_enc_btn_clbk = menu_forward_item;
-  gl_ctrl_p.ctrl_enc_a_btn_clbk = menu_forward_item;
-  gl_ctrl_p.ctrl_enc_b_btn_clbk = menu_back_item;
-  gl_ctrl_p.ctrl_btn1_long_clbk = nothing; // smol button
-
-  gl_ctrl_p.ctrl_btn0_clbk = nothing; // big button
-
-  gl_ctrl_p.ctrl_swt_off_clkb = change_mode_main;
-  gl_ctrl_p.ctrl_swt_on_clkb = change_mode_prog;
-}
+#if 1
+#include "util.h"
+#endif
 
 int main( void ) {
   cli( );
@@ -77,26 +88,38 @@ int main( void ) {
   sound_init( );
   led_init( );
   display_init( );
-  powerloss_detect_init( eeprom_save_mtrnm_set );
+  powerloss_detect_init( powerloss_clbk );
 
   timer_start( );
   mtrnm_start( );
 
-  init_dflt_mtrnm( );
-
   eeprom_load_mtrnm_set( );
 
-  //init_ctrl_clbks( );
-  //controls_init( );
+  ctrl_init( );
 
   sei( );
 
+#if 0
+  uint32_t a = timer_get_ms( );
+#endif
   while( 1 ) { // happens about every 12-13ms
-#ifndef DISABLE_EEPROM
+#ifdef ENABLE_POWERLOSS_DETECT
     if( powerloss_detect_tick( ) ) break;
 #endif
+#if 1
     menu_tick( );
-    //if( timer_get_ms( ) - gl_ctrl_p.btn_tim >= 2000 && gl_ctrl_p.btn_pressed ) 
+#else
+    char output_buf[4];
+    #if 1
+    dig_itoa16( output_buf, pwr_adc_val );
+    #else
+    dig_itoa16( output_buf, timer_get_ms( ) - a );
+    #endif
+    display_set_chars( output_buf, 4 );
+    display_tick( );
+    a = timer_get_ms( );
+#endif
+    //if( timer_get_ms( ) - gl_ctrl_p.btn_tim >= 2000 && gl_ctrl_p.btn_pressed )
     //  gl_ctrl_p.ctrl_btn1_long_clbk( );
   }
 

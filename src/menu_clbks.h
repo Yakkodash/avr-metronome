@@ -186,7 +186,7 @@ void menu_print_swing( void ) {
   output_len = 4;
 }
 
-void menu_print_cntdw_prog( void ) {
+void print_cntdw_prog( void ) {
   dig_itoa16( dig_buf, gl_mtrnm_p.cur_cntdwn );
   output_buf[0] = '-';
   output_buf[1] = dig_buf[1];
@@ -210,7 +210,7 @@ void menu_print_led_sett( void ) {
 void menu_print_start_prog( void ) {
 
   if( gl_mtrnm_p.cur_cntdwn ) {
-    menu_print_cntdw_prog( );
+    print_cntdw_prog( );
     return;
   }
 
@@ -226,7 +226,7 @@ void menu_print_start_prog( void ) {
 void menu_print_end_prog( void ) {
 
   if( gl_mtrnm_p.cur_cntdwn ) {
-    menu_print_cntdw_prog( );
+    print_cntdw_prog( );
     return;
   }
 
@@ -242,7 +242,7 @@ void menu_print_end_prog( void ) {
 void menu_print_inc_bpm_prog( void ) {
 
   if( gl_mtrnm_p.cur_cntdwn ) {
-    menu_print_cntdw_prog( );
+    print_cntdw_prog( );
     return;
   }
 
@@ -270,7 +270,7 @@ void menu_print_inc_bpm_prog( void ) {
 void menu_print_inc_bar_prog( void ) {
 
   if( gl_mtrnm_p.cur_cntdwn ) {
-    menu_print_cntdw_prog( );
+    print_cntdw_prog( );
     return;
   }
 
@@ -300,10 +300,10 @@ void menu_print_inc_bar_prog( void ) {
   }
 }
 
-void menu_print_cntdw_en_prog( void ) {
+void print_cntdw_en_prog( void ) {
 
   if( gl_mtrnm_p.cur_cntdwn ) {
-    menu_print_cntdw_prog( );
+    print_cntdw_prog( );
     return;
   }
 
@@ -364,4 +364,12 @@ void menu_print_beep_ms_sett( void ) {
   output_buf[4] = dig_buf[3];
 
   output_len = 5;
+}
+
+void menu_main_entry( void ) {
+  mtrnm_change_mode( MTRNM_MODE_CONST );
+}
+
+void menu_prog_entry( void ) {
+  mtrnm_change_mode( MTRNM_MODE_PROG );
 }

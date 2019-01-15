@@ -9,10 +9,9 @@ CC      = avr-gcc
 OBJCOPY = avr-objcopy
 DUDE    = avrdude
 
-CFLAGS  = -Werror -Os -DF_CPU=16000000UL -std=gnu99
+CFLAGS  = -Wall -Werror -Os -DF_CPU=16000000UL -std=gnu99 # -DENABLE_POWERLOSS_DETECT # -DENABLE_EEPROM #
 PFLAGS  = -b 19200
-FUSES		= -U lfuse:w:0x7F:m
-#FUSES		= -U lfuse:w:0x62:m
+FUSES   = -U lfuse:w:0x7F:m # Ceramic resonator, slowly rising power, startup time 16K CK + 14 CK + 65ms
 
 SRCDIR  = src
 OBJDIR  = obj

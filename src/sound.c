@@ -4,7 +4,7 @@ void sound_init( void ) {
   TCCR0A = _BV( COM0A0 ) | _BV( WGM01 ); // CTC mode
   TCCR0B = 0; // stop timer
 
-	SOUND_PORT_DIR |=  _BV( SOUND_PIN_DIR );
+	SOUND_PORT_DIR |=  _BV( SOUND_PIN );
 }
 
 void sound_start( void ) {

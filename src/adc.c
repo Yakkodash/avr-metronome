@@ -3,11 +3,14 @@
 
 void adc_init( void ) {
   // AREF = AVcc
-  ADMUX = _BV( REFS0 );
+  //ADMUX = _BV( REFS0 );
+
 
   // ADC Enable and prescaler of 128
   // 16000000/128 = 125000
-  ADCSRA = _BV( ADEN ) | _BV( ADPS0 ) | _BV( ADPS1 );
+  //ADCSRA = _BV( ADEN ) | _BV( ADPS0 ) | _BV( ADPS1 );
+  ADMUX |= (0<<REFS0)|(0<<REFS1);
+  ADCSRA |= (1<<ADEN)|(1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0);
 }
 
 inline uint16_t adc_read( uint8_t ch ) { // channel 4 -- power fail capture

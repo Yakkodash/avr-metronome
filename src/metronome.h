@@ -14,7 +14,7 @@
 #define MTRNM_MIN_SUBDIVS 1
 
 #define MTRNM_MAX_BEEP_MS 20
-#define MTRNM_MIN_BEEP_MS 7
+#define MTRNM_MIN_BEEP_MS 5
 
 #define MTRNM_MAX_INC_BAR 99
 #define MTRNM_MIN_INC_BAR 1

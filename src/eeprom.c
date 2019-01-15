@@ -1,7 +1,7 @@
 #include "eeprom.h"
 #include "metronome.h"
 
-#ifndef DISABLE_EEPROM
+#ifdef ENABLE_EEPROM
 static uint16_t e_bpm EEMEM;
 static uint16_t e_target_bpm EEMEM;
 
@@ -24,7 +24,7 @@ static uint8_t  e_beep_ms EEMEM;
 #endif
 
 void eeprom_save_mtrnm_set( void ) {
-#ifndef DISABLE_EEPROM
+#ifdef ENABLE_EEPROM
   eeprom_write_word( &e_bpm, gl_mtrnm_p.start_bpm );
   eeprom_write_word( &e_target_bpm, gl_mtrnm_p.target_bpm );
 
@@ -41,7 +41,7 @@ void eeprom_save_mtrnm_set( void ) {
 }
 
 void eeprom_save_sound_set( void ) {
-#ifndef DISABLE_EEPROM
+#ifdef ENABLE_EEPROM
   eeprom_write_byte( &e_note_strong, gl_mtrnm_p.note_strong );
   eeprom_write_byte( &e_note_weak, gl_mtrnm_p.note_weak );
   eeprom_write_byte( &e_note_weak, gl_mtrnm_p.note_weak );
@@ -53,7 +53,7 @@ void eeprom_save_sound_set( void ) {
 
 void eeprom_load_mtrnm_set( void ) {
 
-#ifndef DISABLE_EEPROM
+#ifdef ENABLE_EEPROM
   uint16_t var16;
   uint8_t var8;
 
