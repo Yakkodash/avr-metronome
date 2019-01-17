@@ -4,7 +4,6 @@
 #include "util.h"
 #include "controls.h"
 #include "notes.h"
-#include "eeprom.h"
 #include <stddef.h>
 
 static char output_buf[MENU_OUTPUT_BUF_LEN];
@@ -45,17 +44,32 @@ static const menu_item_t menu_sett_items[] = {
 
 static const menu_t menus[] = {
   [MENU_MAIN] =
-  { .items = menu_main_items, .do_on_entry = menu_main_entry, .do_on_exit = NULL },
+  { 
+    .items = menu_main_items, 
+    .do_on_entry_clbk = menu_main_entry, 
+    .do_on_exit_clbk = NULL, 
+    .do_on_btn_clbk = mtrnm_reset_const 
+  },
 
   [MENU_PROG] =
-  { .items = menu_prog_items, .do_on_entry = menu_prog_entry, .do_on_exit = NULL },
+  { 
+    .items = menu_prog_items, 
+    .do_on_entry_clbk = menu_prog_entry, 
+    .do_on_exit_clbk = NULL, 
+    .do_on_btn_clbk = mtrnm_reset_prog 
+  },
 
   [MENU_SETT] =
-  { .items = menu_sett_items, .do_on_entry = NULL, .do_on_exit = NULL }
+  { 
+    .items = menu_sett_items, 
+    .do_on_entry_clbk = NULL, 
+    .do_on_exit_clbk = NULL, 
+    .do_on_btn_clbk = mtrnm_reset_sett 
+  }
 };
 
 void menu_forward_item( void ) {
-  if( &menus[cur_menu].items[cur_item + 1] == 0 ) cur_item = 0;
+  if( menus[cur_menu].items[cur_item + 1].right_clbk == 0 ) cur_item = 0;
   else cur_item++;
 }
 
@@ -69,10 +83,10 @@ void menu_backward_item( void ) {
 }
 
 void menu_change_menu( menu_type_t m ) {
-  if( menus[cur_menu].do_on_exit != NULL ) menus[cur_menu].do_on_exit( );
+  if( menus[cur_menu].do_on_exit_clbk != NULL ) menus[cur_menu].do_on_exit_clbk( );
   cur_menu = m;
   cur_item = 0;
-  if( menus[cur_menu].do_on_entry != NULL ) menus[cur_menu].do_on_entry( );
+  if( menus[cur_menu].do_on_entry_clbk != NULL ) menus[cur_menu].do_on_entry_clbk( );
 }
 
 void menu_forward_menu( void ) {
@@ -83,7 +97,7 @@ void menu_forward_menu( void ) {
 void menu_tick( void ) {
   gl_ctrl_p.ctrl_enc_a_clbk = menus[cur_menu].items[cur_item].right_clbk;
   gl_ctrl_p.ctrl_enc_b_clbk = menus[cur_menu].items[cur_item].left_clbk;
-  gl_ctrl_p.ctrl_btn1_short_clbk = resets[cur_menu];
+  gl_ctrl_p.ctrl_btn1_short_clbk = menus[cur_menu].do_on_btn_clbk;
 
   menus[cur_menu].items[cur_item].print_clbk( );
 

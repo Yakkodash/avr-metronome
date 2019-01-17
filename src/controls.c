@@ -1,28 +1,5 @@
 #include "controls.h"
-#include "metronome.h"
 #include "timer.h"
-
-#define CTRL_ENC_BTN_PORT_DIR DDRD
-#define CTRL_ENC_BTN_PORT     PORTD
-#define CTRL_ENC_BTN_PIN      PD7
-#define CTRL_ENC_BTN_INPINS   PIND
-#define CTRL_ENC_BTN_PCINT    PCINT23
-#define CTRL_ENC_BTN_PCMSK    PCMSK2
-
-#define CTRL_ENC_ROT_PORT_DIR DDRB
-#define CTRL_ENC_ROT_PORT     PORTB
-#define CTRL_ENC_ROT_A_PIN    PB0
-#define CTRL_ENC_ROT_B_PIN    PB1
-#define CTRL_ENC_ROT_INPINS   PINB
-#define CTRL_ENC_ROT_A_PCINT  PCINT0
-#define CTRL_ENC_ROT_B_PCINT  PCINT1
-#define CTRL_ENC_ROT_PCMSK    PCMSK0
-
-#define CTRL_SWT_PORT_DIR DDRC
-#define CTRL_SWT_PORT     PORTC
-#define CTRL_SWT_PIN      PC4
-#define CTRL_SWT_PCINT    PCINT12
-#define CTRL_SWT_PCMSK    PCMSK1
 
 static int8_t enc_state = 0;
 
@@ -42,7 +19,7 @@ static int8_t check_enc_btn_press( void ) {
   return PIND & _BV( PD7 );
 }
 
-void switch_handle( void ) {
+void check_switch( void ) {
   if( PINC & _BV( PINC4 ) ) gl_ctrl_p.ctrl_swt_on_clkb( );
   else gl_ctrl_p.ctrl_swt_off_clkb( );
 }
@@ -83,26 +60,25 @@ static void init_switch( void ) {
 
   CTRL_SWT_PCMSK |= _BV( CTRL_SWT_PCINT ); // switch
 
-  switch_handle( );
+  check_switch( );
 }
 
 // Button0
 static void init_btn0( void ) {
-  DDRD &= ~( _BV( PD2 ) );
-  PORTD |= _BV( PD2 );
+  CTRL_BTN0_PORT_DIR &= ~( _BV( CTRL_BTN0_PIN ) );
+  CTRL_BTN0_PORT |= _BV( CTRL_BTN0_PIN );
 
-  EIMSK |= _BV( INT0 );
-  EICRA |= _BV( ISC01 ) | _BV( ISC00 ); // rising edge
+  EIMSK |= _BV( CTRL_BTN0_INT );
+  EICRA |= CTRL_BTN0_LOGIC; // rising edge
 }
 
 // Button1
 static void init_btn1( void ) {
-  DDRD &= ~( _BV( PD3 ) );
-  PORTD |= _BV( PD3 );
+  CTRL_BTN1_PORT_DIR &= ~( _BV( CTRL_BTN1_PIN ) );
+  CTRL_BTN1_PORT |= _BV( CTRL_BTN1_PIN );
 
-  EIMSK |= _BV( INT1 );
-  //EICRA |= _BV( ISC11 ) | _BV( ISC10 ); // rising edge
-  EICRA |= _BV( ISC11 ); // falling edge
+  EIMSK |= _BV( CTRL_BTN1_INT );
+  EICRA |= CTRL_BTN1_LOGIC; // rising edge
 }
 
 void ctrl_init( void ) {
@@ -116,7 +92,7 @@ void ctrl_init( void ) {
 }
 
 // Encoder rotation interrupt
-ISR( PCINT0_vect ) {
+ISR( CTRL_ENC_ROT_PCINT_V ) {
   enc_btn_check = check_enc_btn_press( );
 
   if( check_enc_moved( ) ) {
@@ -131,12 +107,12 @@ ISR( PCINT0_vect ) {
   }
 }
 
-ISR( PCINT1_vect ) {
-  switch_handle( );
+ISR( CTRL_SWT_PCINT_V ) {
+  check_switch( );
 }
 
 // Encoder button interrupt
-ISR( PCINT2_vect ) {
+ISR( CTRL_ENC_BTN_PCINT_V ) {
   if( check_enc_btn_release( ) ) {
     if( enc_rot_check ) enc_rot_check = 0;
     else gl_ctrl_p.ctrl_enc_btn_clbk( );
@@ -144,12 +120,12 @@ ISR( PCINT2_vect ) {
 }
 
 // Button0 interrupt
-ISR( INT0_vect ) {
+ISR( CTRL_BTN0_INT_V ) {
   gl_ctrl_p.ctrl_btn0_clbk( );
 }	
 
 // Button1 interrupt
-ISR( INT1_vect ) {
+ISR( CTRL_BTN1_INT_V ) {
   gl_ctrl_p.ctrl_btn1_short_clbk( );
 }	
 

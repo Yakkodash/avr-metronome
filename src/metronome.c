@@ -4,7 +4,7 @@
 #include "sound.h"
 #include "led.h"
 #include "display.h"
-#include "eeprom.h"
+//#include "eeprom.h"
 
 void mtrnm_start( void ) {
   TCCR1B |= _BV( CS12 ) | _BV( CS10 ); // prescaler 1024 selected
@@ -67,7 +67,7 @@ void mtrnm_reset_sett( void ) {
   gl_mtrnm_p.note_weak = DFLT_WEAK_NOTE;
   gl_mtrnm_p.note_subdiv = DFLT_SUBDIV_NOTE;
   gl_mtrnm_p.led_en = DFLT_LED_EN;
-  eeprom_save_sound_set( );
+  //eeprom_save_sound_set( );
 }
 
 static void mtrnm_calc_next_bpm( ) {

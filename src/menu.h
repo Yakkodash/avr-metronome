@@ -17,9 +17,11 @@ typedef struct menu_item_s {
   void (*print_clbk)(void);  // print while not turning encoder
 } menu_item_t;
 
+
 typedef struct menu_s {
-  void (*do_on_entry)(void);
-  void (*do_on_exit)(void);
+  void (*do_on_entry_clbk)(void);
+  void (*do_on_exit_clbk)(void);
+  void (*do_on_btn_clbk)(void);
   const menu_item_t *items;
 } menu_t;
 

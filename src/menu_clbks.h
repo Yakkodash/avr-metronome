@@ -1,9 +1,3 @@
-static void (*resets[MENU_CNT])(void) = {
-  [MENU_MAIN] = mtrnm_reset_const,
-  [MENU_PROG] = mtrnm_reset_prog,
-  [MENU_SETT] = mtrnm_reset_sett
-};
-
 // Setting
 void menu_active_bpm_inc( void ) {
   if( gl_mtrnm_p.active_bpm < MTRNM_MAX_BPM ) gl_mtrnm_p.active_bpm++;

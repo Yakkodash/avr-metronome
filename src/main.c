@@ -16,12 +16,11 @@
 
 uint16_t pwr_adc_val = 0;
 
-
-static void change_mode_main( void ) {
+inline static void change_mode_main( void ) {
   menu_change_menu( MENU_MAIN );
 }
 
-static void change_mode_prog( void ) {
+inline static void change_mode_prog( void ) {
   menu_change_menu( MENU_PROG );
 }
 

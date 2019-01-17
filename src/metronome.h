@@ -7,7 +7,7 @@
 #define MTRNM_MAX_BPM 500
 #define MTRNM_MIN_BPM 15
 
-#define MTRNM_MAX_BEATS 99
+#define MTRNM_MAX_BEATS 32
 #define MTRNM_MIN_BEATS 1
 
 #define MTRNM_MAX_SUBDIVS 9
