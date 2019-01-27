@@ -64,15 +64,6 @@ static void init_switch( void ) {
 }
 
 // Button0
-static void init_btn0( void ) {
-  CTRL_BTN0_PORT_DIR &= ~( _BV( CTRL_BTN0_PIN ) );
-  CTRL_BTN0_PORT |= _BV( CTRL_BTN0_PIN );
-
-  EIMSK |= _BV( CTRL_BTN0_INT );
-  EICRA |= CTRL_BTN0_LOGIC; // rising edge
-}
-
-// Button1
 static void init_btn1( void ) {
   CTRL_BTN1_PORT_DIR &= ~( _BV( CTRL_BTN1_PIN ) );
   CTRL_BTN1_PORT |= _BV( CTRL_BTN1_PIN );
@@ -81,9 +72,18 @@ static void init_btn1( void ) {
   EICRA |= CTRL_BTN1_LOGIC; // rising edge
 }
 
+// Button1
+static void init_btn2( void ) {
+  CTRL_BTN2_PORT_DIR &= ~( _BV( CTRL_BTN2_PIN ) );
+  CTRL_BTN2_PORT |= _BV( CTRL_BTN2_PIN );
+
+  EIMSK |= _BV( CTRL_BTN2_INT );
+  EICRA |= CTRL_BTN2_LOGIC; // rising edge
+}
+
 void ctrl_init( void ) {
-  init_btn0( );
   init_btn1( );
+  init_btn2( );
   init_enc_btn( );
   init_enc_rot( );
   init_switch( );
@@ -120,12 +120,12 @@ ISR( CTRL_ENC_BTN_PCINT_V ) {
 }
 
 // Button0 interrupt
-ISR( CTRL_BTN0_INT_V ) {
-  gl_ctrl_p.ctrl_btn0_clbk( );
+ISR( CTRL_BTN1_INT_V ) {
+  gl_ctrl_p.ctrl_btn1_clbk( );
 }	
 
 // Button1 interrupt
-ISR( CTRL_BTN1_INT_V ) {
-  gl_ctrl_p.ctrl_btn1_short_clbk( );
+ISR( CTRL_BTN2_INT_V ) {
+  gl_ctrl_p.ctrl_btn2_clbk( );
 }	
 

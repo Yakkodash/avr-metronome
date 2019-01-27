@@ -280,7 +280,7 @@ void menu_print_inc_bar_prog( void ) {
 
     output_len = 5;
   } else {
-    output_buf[0] = '|'; // like a bar on a music sheet
+    output_buf[0] = '['; // like a bar on a music sheet
 
     dig_itoa16( dig_buf, gl_mtrnm_p.inc_bar );
     output_buf[1] = dig_buf[3];
@@ -288,7 +288,7 @@ void menu_print_inc_bar_prog( void ) {
 
     dig_itoa16( dig_buf, gl_mtrnm_p.cur_bar );
     output_buf[3] = dig_buf[3];
-    output_buf[4] = '1';
+    output_buf[4] = ']';
 
     output_len = 5;
   }

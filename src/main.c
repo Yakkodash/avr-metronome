@@ -57,10 +57,9 @@ volatile struct ctrl_s gl_ctrl_p = {
   .ctrl_enc_a_btn_clbk = menu_forward_item,
   .ctrl_enc_b_btn_clbk = menu_backward_item,
 
-  .ctrl_btn0_clbk = NULL,
+  .ctrl_btn1_clbk = NULL,
 
-  .ctrl_btn1_short_clbk = NULL,
-  .ctrl_btn1_long_clbk = NULL,
+  .ctrl_btn2_clbk = NULL,
 
   .ctrl_swt_on_clkb = change_mode_main,
   .ctrl_swt_off_clkb = change_mode_prog,
@@ -119,7 +118,7 @@ int main( void ) {
     a = timer_get_ms( );
 #endif
     //if( timer_get_ms( ) - gl_ctrl_p.btn_tim >= 2000 && gl_ctrl_p.btn_pressed )
-    //  gl_ctrl_p.ctrl_btn1_long_clbk( );
+    //  gl_ctrl_p.ctrl_btn2_long_clbk( );
   }
 
   return 0;

@@ -28,19 +28,19 @@
 #define CTRL_SWT_PCMSK    PCMSK1
 #define CTRL_SWT_PCINT_V  PCINT1_vect
 
-#define CTRL_BTN0_PORT_DIR  DDRD
-#define CTRL_BTN0_PORT      PORTD
-#define CTRL_BTN0_PIN       PD2
-#define CTRL_BTN0_INT       INT0
-#define CTRL_BTN0_LOGIC     ( _BV( ISC01 ) | _BV( ISC00 ) ) // rising edge
-#define CTRL_BTN0_INT_V     INT0_vect
-
 #define CTRL_BTN1_PORT_DIR  DDRD
 #define CTRL_BTN1_PORT      PORTD
-#define CTRL_BTN1_PIN       PD3
-#define CTRL_BTN1_INT       INT1
-#define CTRL_BTN1_LOGIC     ( _BV( ISC11 ) ) // falling edge
-#define CTRL_BTN1_INT_V     INT1_vect
+#define CTRL_BTN1_PIN       PD2
+#define CTRL_BTN1_INT       INT0
+#define CTRL_BTN1_LOGIC     ( _BV( ISC01 ) | _BV( ISC00 ) ) // rising edge
+#define CTRL_BTN1_INT_V     INT0_vect
+
+#define CTRL_BTN2_PORT_DIR  DDRD
+#define CTRL_BTN2_PORT      PORTD
+#define CTRL_BTN2_PIN       PD3
+#define CTRL_BTN2_INT       INT1
+#define CTRL_BTN2_LOGIC     ( _BV( ISC11 ) ) // falling edge
+#define CTRL_BTN2_INT_V     INT1_vect
 
 extern volatile struct ctrl_s {
   void (*ctrl_enc_a_clbk)(void);
@@ -52,8 +52,9 @@ extern volatile struct ctrl_s {
 
   void (*ctrl_btn0_clbk)(void);
 
-  void (*ctrl_btn1_short_clbk)(void);
-  void (*ctrl_btn1_long_clbk)(void);
+  void (*ctrl_btn1_clbk)(void);
+
+  void (*ctrl_btn2_clbk)(void);
 
   void (*ctrl_swt_on_clkb)(void); // switch callback
   void (*ctrl_swt_off_clkb)(void); // switch callback

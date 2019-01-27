@@ -5,3 +5,4 @@ src/.*.sw?
 tags
 *.bak
 /rescue-backup/
+circuit-cache.lib

@@ -97,7 +97,7 @@ void menu_forward_menu( void ) {
 void menu_tick( void ) {
   gl_ctrl_p.ctrl_enc_a_clbk = menus[cur_menu].items[cur_item].right_clbk;
   gl_ctrl_p.ctrl_enc_b_clbk = menus[cur_menu].items[cur_item].left_clbk;
-  gl_ctrl_p.ctrl_btn1_short_clbk = menus[cur_menu].do_on_btn_clbk;
+  gl_ctrl_p.ctrl_btn2_clbk = menus[cur_menu].do_on_btn_clbk;
 
   menus[cur_menu].items[cur_item].print_clbk( );
 
