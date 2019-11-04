@@ -18,7 +18,7 @@ typedef enum {
   DISP_MODE_SLOW_FLICKER
 } disp_mode_t;
 
-static const uint8_t display_digs[DIG_NUM] = { PC0, PC1, PC2, PC3 };
+static const uint8_t display_digs[DIG_NUM] = { PC1, PC2, PC3, PC0 };
 
 void display_init( void );
 void display_set_chars( char *data, uint8_t len );

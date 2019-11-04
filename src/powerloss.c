@@ -14,34 +14,24 @@ void powerloss_detect_init( void (*clbk)(void) ) {
 }
 
 static uint16_t ret = 0;
-//static uint32_t tim = 0;
-//static uint32_t buf_tim = 0;
 
 uint8_t powerloss_detect_tick( void ) {
   ret = 0;
- // buf_tim = timer_get_ms( );
-/*
-  if( buf_tim - tim < PWRLOSS_CHECK_MS ) return ret;
-  else tim = buf_tim;
-*/
-  cli( );
+
+  PWRLOSS_PORT_DIR &= ~(_BV( PWRLOSS_PIN ));
+  PWRLOSS_PORT &= ~( _BV( PWRLOSS_PIN ) );
 
   pwr_adc_val = adc_read( PWRLOSS_ADC_CHAN );
 
-  if( pwr_adc_val < PWRLOSS_THRESH_LOW ) {
-    //PWRLOSS_PORT_DIR |= _BV( PWRLOSS_PIN );
-    //PWRLOSS_PORT |= ( _BV( PWRLOSS_PIN ) );
-    return ret;
+  if( pwr_adc_val < 800 ) {
+    PWRLOSS_PORT_DIR |= (_BV( PWRLOSS_PIN ));
+    PWRLOSS_PORT |= ( _BV( PWRLOSS_PIN ) );
   }
 
-  //PWRLOSS_PORT_DIR &= ~( _BV( PWRLOSS_PIN ) );
-  //PWRLOSS_PORT &= ~( _BV( PWRLOSS_PIN ) );
-
-  if( pwr_adc_val > PWRLOSS_THRESH_HIGH && timer_get_ms( ) > PWRLOSS_DELAY_MS ) { // ignore first second after power on
-  //  powerloss_clbk( );
-  //  ret = 1;
+  if( pwr_adc_val > PWRLOSS_THRESH_HIGH ) { // ignore first second after power on
+    powerloss_clbk( );
+    ret = 1;
   };
-  sei( ); // on powerloss interrupts are disabled so just in case of a capacitor hiccup enable them each tick
 
   return ret;
 }

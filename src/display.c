@@ -10,14 +10,20 @@ static uint8_t display_cur_dig = 0;
 volatile disp_mode_t disp_mode = DISP_MODE_STABLE;
 
 void display_init( void ) {
-  for( uint8_t i = 0; i< DIG_NUM; i++ ) {
+  for( uint8_t i = 0; i < DIG_NUM; i++ ) {
     DISP_CS_DIR_PORT |= _BV( display_digs[i] );
     DISP_CS_PORT |= _BV( display_digs[i] );
   }
 }
 
 static void display_set_digit( uint8_t dig_num ) {
-  DISP_CS_PORT = ~( _BV( display_digs[dig_num] ) );
+  for( uint8_t i = 0; i < DIG_NUM; i++ ) {
+    if( i == dig_num ) {
+      DISP_CS_PORT &= ~( _BV( display_digs[i] ) );
+    } else {
+      DISP_CS_PORT |= _BV( display_digs[i] );
+    }
+  }
 }
 
 void display_set_chars( char *data, uint8_t len ) {

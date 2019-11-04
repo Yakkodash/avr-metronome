@@ -91,34 +91,18 @@ int main( void ) {
   timer_start( );
   mtrnm_start( );
 
-  eeprom_load_mtrnm_set( );
+  //eeprom_load_mtrnm_set( );
 
   ctrl_init( );
 
   sei( );
 
-#if 0
-  uint32_t a = timer_get_ms( );
-#endif
   while( 1 ) { // happens about every 12-13ms
-#ifdef ENABLE_POWERLOSS_DETECT
-    if( powerloss_detect_tick( ) ) break;
-#endif
-#if 1
-    menu_tick( );
-#else
+    powerloss_detect_tick();
     char output_buf[4];
-    #if 1
     dig_itoa16( output_buf, pwr_adc_val );
-    #else
-    dig_itoa16( output_buf, timer_get_ms( ) - a );
-    #endif
     display_set_chars( output_buf, 4 );
     display_tick( );
-    a = timer_get_ms( );
-#endif
-    //if( timer_get_ms( ) - gl_ctrl_p.btn_tim >= 2000 && gl_ctrl_p.btn_pressed )
-    //  gl_ctrl_p.ctrl_btn2_long_clbk( );
   }
 
   return 0;
