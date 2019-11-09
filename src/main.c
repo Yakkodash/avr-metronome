@@ -57,9 +57,9 @@ volatile struct ctrl_s gl_ctrl_p = {
   .ctrl_enc_a_btn_clbk = menu_forward_item,
   .ctrl_enc_b_btn_clbk = menu_backward_item,
 
-  .ctrl_btn1_clbk = NULL,
+  .ctrl_btn1_clbk = menu_forward_item,
 
-  .ctrl_btn2_clbk = NULL,
+  .ctrl_btn2_clbk = menu_backward_item,
 
   .ctrl_swt_on_clkb = change_mode_main,
   .ctrl_swt_off_clkb = change_mode_prog,
@@ -81,10 +81,10 @@ int main( void ) {
   CLKPR = ( 1 << CLKPCE );
   CLKPR = 0;
 
-  adc_init( );
+  //adc_init( );
   spi_init( );
-  sound_init( );
-  led_init( );
+  //sound_init( );
+  //led_init( );
   display_init( );
   powerloss_detect_init( powerloss_clbk );
 
@@ -97,12 +97,12 @@ int main( void ) {
 
   sei( );
 
+  char output_buf[4];
   while( 1 ) { // happens about every 12-13ms
-    powerloss_detect_tick();
-    char output_buf[4];
-    dig_itoa16( output_buf, pwr_adc_val );
-    display_set_chars( output_buf, 4 );
-    display_tick( );
+    if( powerloss_detect_tick() ) break; // try to die gracefully
+
+
+    menu_tick( );
   }
 
   return 0;

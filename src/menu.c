@@ -103,4 +103,11 @@ void menu_tick( void ) {
 
   display_set_chars( output_buf, output_len );
   display_tick( );
+   /* uint8_t enc_1 = PIND & _BV( PD1 );
+    uint8_t enc_2 = PIND & _BV( PD2 );
+    uint8_t enc_3 = PIND & _BV( PD3 );
+    uint32_t a = enc_1 | enc_2 << 1 | enc_3 <<2;
+    dig_itoa16( output_buf, enc_1 | enc_2 | enc_3 );
+    display_set_chars( output_buf, 4 );
+    display_tick( );*/
 }

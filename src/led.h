@@ -7,7 +7,7 @@
 
 #define LED_NUM 3
 
-static const uint8_t led_pins[LED_NUM] = { PD0, PD1, PD4 };
+static const uint8_t led_pins[LED_NUM] = { PD0, PD4, PD5 };
 
 void led_init( void );
 
