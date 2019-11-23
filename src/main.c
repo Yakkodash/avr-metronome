@@ -68,7 +68,7 @@ volatile struct ctrl_s gl_ctrl_p = {
 void powerloss_clbk( void ) {
   cli( );
   for( uint8_t i = 0; i < LED_NUM; i++ ) led_set( i, 0 );
-  eeprom_save_mtrnm_set( );
+  //eeprom_save_mtrnm_set( );
 }
 
 #if 1
@@ -81,10 +81,10 @@ int main( void ) {
   CLKPR = ( 1 << CLKPCE );
   CLKPR = 0;
 
-  //adc_init( );
+  adc_init( );
   spi_init( );
-  //sound_init( );
-  //led_init( );
+  sound_init( );
+  led_init( );
   display_init( );
   powerloss_detect_init( powerloss_clbk );
 
@@ -100,9 +100,12 @@ int main( void ) {
   char output_buf[4];
   while( 1 ) { // happens about every 12-13ms
     if( powerloss_detect_tick() ) break; // try to die gracefully
+    char output_buf1[4];
+    dig_itoa16(output_buf1, 1);
+  display_set_chars( output_buf1, 4 );
+  display_tick( );
 
-
-    menu_tick( );
+  //  menu_tick( );
   }
 
   return 0;
