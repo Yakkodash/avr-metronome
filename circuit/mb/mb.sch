@@ -1,5 +1,4 @@
 EESchema Schematic File Version 4
-LIBS:mb-cache
 EELAYER 26 0
 EELAYER END
 $Descr A4 11693 8268
@@ -41,7 +40,7 @@ Text GLabel 4050 1250 0    50   Input ~ 0
 SPI_SCK
 Text GLabel 4050 1150 0    50   Input ~ 0
 SPI_MISO
-Text GLabel 4850 2800 2    50   Input ~ 0
+Text GLabel 4550 2800 1    50   Input ~ 0
 NRST
 Text GLabel 4050 1350 0    50   Input ~ 0
 NRST
@@ -64,7 +63,7 @@ Text GLabel 3200 3700 2    50   Input ~ 0
 ENC_BUTTON
 Text GLabel 2500 3200 2    50   Input ~ 0
 BUTTON1
-Text GLabel 3600 3100 2    50   Input ~ 0
+Text GLabel 3150 3100 2    50   Input ~ 0
 BUTTON2
 Text GLabel 3050 2600 2    50   Input ~ 0
 SWITCH0
@@ -408,23 +407,12 @@ Wire Wire Line
 $Comp
 L Device:R R6
 U 1 1 5DC16C34
-P 3100 2950
-F 0 "R6" H 3170 2996 50  0000 L CNN
-F 1 "10k" H 3170 2905 50  0000 L CNN
-F 2 "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal" V 3030 2950 50  0001 C CNN
-F 3 "~" H 3100 2950 50  0001 C CNN
-	1    3100 2950
-	1    0    0    -1  
-$EndComp
-$Comp
-L power:GND #PWR05
-U 1 1 5DC1C99D
-P 3100 3100
-F 0 "#PWR05" H 3100 2850 50  0001 C CNN
-F 1 "GND" H 3105 2927 50  0000 C CNN
-F 2 "" H 3100 3100 50  0001 C CNN
-F 3 "" H 3100 3100 50  0001 C CNN
-	1    3100 3100
+P 4650 3000
+F 0 "R6" H 4720 3046 50  0000 L CNN
+F 1 "10k" H 4720 2955 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal" V 4580 3000 50  0001 C CNN
+F 3 "~" H 4650 3000 50  0001 C CNN
+	1    4650 3000
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -651,7 +639,7 @@ F 1 "GND" H 3805 2527 50  0000 C CNN
 F 2 "" H 3800 2700 50  0001 C CNN
 F 3 "" H 3800 2700 50  0001 C CNN
 	1    3800 2700
-	1    0    0    -1  
+	0    -1   -1   0   
 $EndComp
 $Comp
 L Connector:Conn_01x04_Male J5
@@ -834,9 +822,6 @@ $EndComp
 Connection ~ 1700 700 
 Wire Wire Line
 	1700 700  1250 700 
-Connection ~ 3100 2800
-Wire Wire Line
-	2500 2800 3100 2800
 $Comp
 L Device:R R16
 U 1 1 5DCBF145
@@ -985,24 +970,14 @@ Wire Wire Line
 $Comp
 L Device:R R13
 U 1 1 5DD3A89F
-P 3450 3100
-F 0 "R13" V 3243 3100 50  0000 C CNN
-F 1 "0" V 3334 3100 50  0000 C CNN
-F 2 "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P5.08mm_Horizontal" V 3380 3100 50  0001 C CNN
-F 3 "~" H 3450 3100 50  0001 C CNN
-	1    3450 3100
+P 3000 3100
+F 0 "R13" V 2793 3100 50  0000 C CNN
+F 1 "0" V 2884 3100 50  0000 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P5.08mm_Horizontal" V 2930 3100 50  0001 C CNN
+F 3 "~" H 3000 3100 50  0001 C CNN
+	1    3000 3100
 	0    1    1    0   
 $EndComp
-Wire Wire Line
-	2500 3100 2950 3100
-Wire Wire Line
-	2950 3100 2950 3300
-Wire Wire Line
-	2950 3300 3250 3300
-Wire Wire Line
-	3250 3300 3250 3100
-Wire Wire Line
-	3250 3100 3300 3100
 $Comp
 L MCU_Microchip_ATmega:ATmega328P-PU U1
 U 1 1 5C375D75
@@ -1189,42 +1164,16 @@ Wire Wire Line
 Wire Wire Line
 	2500 3500 2800 3500
 $Comp
-L Connector:Conn_01x02_Male J10
-U 1 1 5DD359C3
-P 4500 3500
-F 0 "J10" V 4653 3313 50  0000 R CNN
-F 1 "Conn_01x02_Male" V 4562 3313 50  0000 R CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 4500 3500 50  0001 C CNN
-F 3 "~" H 4500 3500 50  0001 C CNN
-	1    4500 3500
-	0    -1   -1   0   
-$EndComp
-Wire Wire Line
-	3550 2800 3550 2950
-Wire Wire Line
-	3550 2950 4350 2950
-Wire Wire Line
-	3100 2800 3550 2800
-Wire Wire Line
-	4600 2800 4850 2800
-$Comp
 L power:+5V #PWR0109
 U 1 1 5DD3D59B
-P 4500 2950
-F 0 "#PWR0109" H 4500 2800 50  0001 C CNN
-F 1 "+5V" H 4515 3123 50  0000 C CNN
-F 2 "" H 4500 2950 50  0001 C CNN
-F 3 "" H 4500 2950 50  0001 C CNN
-	1    4500 2950
-	1    0    0    -1  
+P 4450 2850
+F 0 "#PWR0109" H 4450 2700 50  0001 C CNN
+F 1 "+5V" H 4465 3023 50  0000 C CNN
+F 2 "" H 4450 2850 50  0001 C CNN
+F 3 "" H 4450 2850 50  0001 C CNN
+	1    4450 2850
+	0    -1   -1   0   
 $EndComp
-Wire Wire Line
-	4350 2650 4600 2650
-Wire Wire Line
-	4600 2650 4600 2800
-Wire Wire Line
-	4350 2650 4350 2950
-Connection ~ 4600 2800
 Text GLabel 4550 1500 3    50   Input ~ 0
 NRST
 Wire Wire Line
@@ -1235,28 +1184,52 @@ Connection ~ 4500 1350
 $Comp
 L Device:R R14
 U 1 1 5DD45D47
-P 4500 3100
-F 0 "R14" H 4570 3146 50  0000 L CNN
-F 1 "0" H 4570 3055 50  0000 L CNN
-F 2 "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal" V 4430 3100 50  0001 C CNN
-F 3 "~" H 4500 3100 50  0001 C CNN
-	1    4500 3100
+P 4450 3000
+F 0 "R14" H 4520 3046 50  0000 L CNN
+F 1 "0" H 4520 2955 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal" V 4380 3000 50  0001 C CNN
+F 3 "~" H 4450 3000 50  0001 C CNN
+	1    4450 3000
 	1    0    0    -1  
 $EndComp
 $Comp
 L power:+5V #PWR0110
 U 1 1 5DD45DEB
-P 4500 3250
-F 0 "#PWR0110" H 4500 3100 50  0001 C CNN
-F 1 "+5V" V 4515 3378 50  0000 L CNN
-F 2 "" H 4500 3250 50  0001 C CNN
-F 3 "" H 4500 3250 50  0001 C CNN
-	1    4500 3250
+P 4450 3150
+F 0 "#PWR0110" H 4450 3000 50  0001 C CNN
+F 1 "+5V" V 4465 3278 50  0000 L CNN
+F 2 "" H 4450 3150 50  0001 C CNN
+F 3 "" H 4450 3150 50  0001 C CNN
+	1    4450 3150
 	0    -1   -1   0   
 $EndComp
+$Comp
+L Connector:Conn_01x03_Male J10
+U 1 1 5DDB39D5
+P 4550 3350
+F 0 "J10" H 4523 3280 50  0000 R CNN
+F 1 "Conn_01x03_Male" V 4523 3371 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 4550 3350 50  0001 C CNN
+F 3 "~" H 4550 3350 50  0001 C CNN
+	1    4550 3350
+	0    -1   -1   0   
+$EndComp
+$Comp
+L power:GND #PWR0111
+U 1 1 5DDC0B53
+P 4650 2850
+F 0 "#PWR0111" H 4650 2600 50  0001 C CNN
+F 1 "GND" V 4655 2722 50  0000 R CNN
+F 2 "" H 4650 2850 50  0001 C CNN
+F 3 "" H 4650 2850 50  0001 C CNN
+	1    4650 2850
+	0    -1   -1   0   
+$EndComp
+Connection ~ 4450 3150
 Wire Wire Line
-	4500 3300 4500 3250
-Connection ~ 4500 3250
+	4550 3150 4550 2800
 Wire Wire Line
-	4600 2800 4600 3300
+	2500 2800 4550 2800
+Wire Wire Line
+	2500 3100 2850 3100
 $EndSCHEMATC

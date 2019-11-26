@@ -57,6 +57,7 @@ volatile struct ctrl_s gl_ctrl_p = {
   .ctrl_enc_a_btn_clbk = menu_forward_item,
   .ctrl_enc_b_btn_clbk = menu_backward_item,
 
+  .ctrl_btn0_clbk = menu_forward_item,
   .ctrl_btn1_clbk = menu_forward_item,
 
   .ctrl_btn2_clbk = menu_backward_item,
@@ -97,12 +98,13 @@ int main( void ) {
 
   sei( );
 
-  char output_buf[4];
   while( 1 ) { // happens about every 12-13ms
     if( powerloss_detect_tick() ) break; // try to die gracefully
-;
-
-    menu_tick( );
+    char out[4];
+    dig_itoa16( out, timer_get_ms( )/1000 );
+    display_set_chars( out, 4 );
+    display_tick( );
+    //menu_tick( );
   }
 
   return 0;

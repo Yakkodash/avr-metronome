@@ -10,6 +10,7 @@ static int8_t enc_btn_check = 0;
 
 static uint8_t enc_rot_check = 0; // indicate that encoder was turned while being pressed
 
+static uint8_t btn2_check = 0;
 // Encoder button check
 static int8_t check_enc_btn_release( void ) {
   return !( PIND & _BV( PIND7 ) );
@@ -22,6 +23,10 @@ static int8_t check_enc_btn_press( void ) {
 void check_switch( void ) {
   if( PINC & _BV( PINC4 ) ) gl_ctrl_p.ctrl_swt_on_clkb( );
   else gl_ctrl_p.ctrl_swt_off_clkb( );
+}
+
+static int8_t check_btn2_press( void ) {
+  return( PIND & _BV( PIND1 ) );
 }
 
 // Encoder rotation check
@@ -63,7 +68,14 @@ static void init_switch( void ) {
   check_switch( );
 }
 
-// Button0
+static void init_btn2( void ) {
+  CTRL_BTN2_PORT_DIR &= ~( _BV( CTRL_BTN2_PIN ) );
+  CTRL_BTN2_PORT |= _BV( CTRL_BTN2_PIN );
+
+  CTRL_BTN2_PCMSK |= _BV( CTRL_BTN2_PCINT );
+}
+
+// Button1
 static void init_btn1( void ) {
   CTRL_BTN1_PORT_DIR &= ~( _BV( CTRL_BTN1_PIN ) );
   CTRL_BTN1_PORT |= _BV( CTRL_BTN1_PIN );
@@ -72,18 +84,19 @@ static void init_btn1( void ) {
   EICRA |= CTRL_BTN1_LOGIC; // rising edge
 }
 
-// Button1
-static void init_btn2( void ) {
-  CTRL_BTN2_PORT_DIR &= ~( _BV( CTRL_BTN2_PIN ) );
-  CTRL_BTN2_PORT |= _BV( CTRL_BTN2_PIN );
+// Button0
+static void init_btn0( void ) {
+  CTRL_BTN0_PORT_DIR &= ~( _BV( CTRL_BTN0_PIN ) );
+  CTRL_BTN0_PORT |= _BV( CTRL_BTN0_PIN );
 
-  EIMSK |= _BV( CTRL_BTN2_INT );
-  EICRA |= CTRL_BTN2_LOGIC; // rising edge
+  EIMSK |= _BV( CTRL_BTN0_INT );
+  EICRA |= CTRL_BTN0_LOGIC; // rising edge
 }
 
 void ctrl_init( void ) {
-  init_btn1( );
   init_btn2( );
+  init_btn1( );
+  init_btn0( );
   init_enc_btn( );
   init_enc_rot( );
   init_switch( );
@@ -111,21 +124,22 @@ ISR( CTRL_SWT_PCINT_V ) {
   check_switch( );
 }
 
-// Encoder button interrupt
 ISR( CTRL_ENC_BTN_PCINT_V ) {
-  if( check_enc_btn_release( ) ) {
+  if( check_btn2_press( ) ) {
+    gl_ctrl_p.ctrl_btn2_clbk( );
+  } else 
+  if( check_enc_btn_release( ) && enc_btn_check ) {
     if( enc_rot_check ) enc_rot_check = 0;
     else gl_ctrl_p.ctrl_enc_btn_clbk( );
   }
+  //check_btn2( );
+}
+
+ISR( CTRL_BTN0_INT_V ) {
+  gl_ctrl_p.ctrl_btn0_clbk( );
 }
 
 // Button0 interrupt
 ISR( CTRL_BTN1_INT_V ) {
   gl_ctrl_p.ctrl_btn1_clbk( );
 }	
-
-// Button1 interrupt
-ISR( CTRL_BTN2_INT_V ) {
-  gl_ctrl_p.ctrl_btn2_clbk( );
-}	
-

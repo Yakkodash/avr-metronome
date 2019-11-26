@@ -7,7 +7,6 @@
 
 static uint8_t display_buf[DIG_NUM];
 static uint8_t display_cur_dig = 0;
-volatile disp_mode_t disp_mode = DISP_MODE_STABLE;
 
 void display_init( void ) {
   for( uint8_t i = 0; i < DIG_NUM; i++ ) {
@@ -42,10 +41,6 @@ void display_set_chars( char *data, uint8_t len ) {
 
 }
 
-void display_set_mode( disp_mode_t mode ) {
-  disp_mode = mode;
-}
-
 void display_tick( void ) {
   display_set_digit( display_cur_dig );
 
@@ -54,18 +49,5 @@ void display_tick( void ) {
   display_cur_dig++;
   if( display_cur_dig == DIG_NUM ) display_cur_dig = 0;
 
-  switch( disp_mode ) {
-    default:
-    case DISP_MODE_SLOW_FLICKER:
-      _delay_ms( 30 );
-      break;
-
-    case DISP_MODE_FAST_FLICKER:
-      _delay_ms( 20 );
-      break;
-
-    case DISP_MODE_STABLE:
-      _delay_ms( 3 );
-      break;
-  }
+  _delay_ms( DISP_DELAY_MS );
 }

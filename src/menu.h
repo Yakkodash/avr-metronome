@@ -21,7 +21,7 @@ typedef struct menu_item_s {
 typedef struct menu_s {
   void (*do_on_entry_clbk)(void);
   void (*do_on_exit_clbk)(void);
-  void (*do_on_btn_clbk)(void);
+  //void (*do_on_btn_clbk)(void);
   const menu_item_t *items;
 } menu_t;
 

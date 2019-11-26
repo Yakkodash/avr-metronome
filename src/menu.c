@@ -48,7 +48,7 @@ static const menu_t menus[] = {
     .items = menu_main_items, 
     .do_on_entry_clbk = menu_main_entry, 
     .do_on_exit_clbk = NULL, 
-    .do_on_btn_clbk = mtrnm_reset_const 
+    //.do_on_btn_clbk = mtrnm_reset_const 
   },
 
   [MENU_PROG] =
@@ -56,7 +56,7 @@ static const menu_t menus[] = {
     .items = menu_prog_items, 
     .do_on_entry_clbk = menu_prog_entry, 
     .do_on_exit_clbk = NULL, 
-    .do_on_btn_clbk = mtrnm_reset_prog 
+    //.do_on_btn_clbk = mtrnm_reset_prog 
   },
 
   [MENU_SETT] =
@@ -64,7 +64,7 @@ static const menu_t menus[] = {
     .items = menu_sett_items, 
     .do_on_entry_clbk = NULL, 
     .do_on_exit_clbk = NULL, 
-    .do_on_btn_clbk = mtrnm_reset_sett 
+    //.do_on_btn_clbk = mtrnm_reset_sett 
   }
 };
 
@@ -97,7 +97,7 @@ void menu_forward_menu( void ) {
 void menu_tick( void ) {
   gl_ctrl_p.ctrl_enc_a_clbk = menus[cur_menu].items[cur_item].right_clbk;
   gl_ctrl_p.ctrl_enc_b_clbk = menus[cur_menu].items[cur_item].left_clbk;
-  gl_ctrl_p.ctrl_btn2_clbk = menus[cur_menu].do_on_btn_clbk;
+  //gl_ctrl_p.ctrl_btn2_clbk = menus[cur_menu].do_on_btn_clbk;
 
   menus[cur_menu].items[cur_item].print_clbk( );
 
