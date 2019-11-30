@@ -65,6 +65,7 @@ void mtrnm_reset_sett( void ) {
   gl_mtrnm_p.note_weak = DFLT_WEAK_NOTE;
   gl_mtrnm_p.note_subdiv = DFLT_SUBDIV_NOTE;
   gl_mtrnm_p.led_en = DFLT_LED_EN;
+  gl_mtrnm_p.cntdwn_en = DFLT_CNTDWND_EN;
 }
 
 static void mtrnm_calc_next_bpm( ) {
