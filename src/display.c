@@ -26,7 +26,7 @@ static void display_set_digit( uint8_t dig_num ) {
 }
 
 void display_set_chars( char *data, uint8_t len ) {
-  uint8_t c, j = 0;
+  uint8_t c = 0, j = 0;
 
   for( uint8_t i = 0; i < len; i++ ) {
     if( data[i+1] == '.' && data[i] != '.' && i+1 < len ) {
@@ -42,12 +42,14 @@ void display_set_chars( char *data, uint8_t len ) {
 }
 
 void display_tick( void ) {
-  display_set_digit( display_cur_dig );
 
   spi_transmit( display_buf[display_cur_dig] );
+
+  display_set_digit( display_cur_dig );
 
   display_cur_dig++;
   if( display_cur_dig == DIG_NUM ) display_cur_dig = 0;
 
-  _delay_ms( DISP_DELAY_MS );
+  _delay_us( DISP_DELAY_US );
+  display_set_digit( DIG_NONE );
 }

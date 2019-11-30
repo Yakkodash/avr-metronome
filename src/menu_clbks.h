@@ -1,6 +1,14 @@
+#include <stdio.h>
+
 // Setting
 void menu_active_bpm_inc( void ) {
   if( gl_mtrnm_p.active_bpm < MTRNM_MAX_BPM ) gl_mtrnm_p.active_bpm++;
+  gl_mtrnm_p.start_bpm = gl_mtrnm_p.active_bpm;
+}
+
+void menu_active_bpm_inc_fast( void ) {
+  if( gl_mtrnm_p.active_bpm < MTRNM_MAX_BPM ) gl_mtrnm_p.active_bpm += 10;
+  if( gl_mtrnm_p.active_bpm > MTRNM_MAX_BPM ) gl_mtrnm_p.active_bpm = MTRNM_MAX_BPM;
   gl_mtrnm_p.start_bpm = gl_mtrnm_p.active_bpm;
 }
 
@@ -9,44 +17,105 @@ void menu_active_bpm_dec( void ) {
   gl_mtrnm_p.start_bpm = gl_mtrnm_p.active_bpm;
 }
 
+void menu_active_bpm_dec_fast( void ) {
+  if( gl_mtrnm_p.active_bpm > MTRNM_MIN_BPM ) gl_mtrnm_p.active_bpm -= 10;
+  if( gl_mtrnm_p.active_bpm < MTRNM_MIN_BPM ) gl_mtrnm_p.active_bpm = MTRNM_MIN_BPM;
+    gl_mtrnm_p.start_bpm = gl_mtrnm_p.active_bpm;
+}
+
 void menu_inc_bpm_inc( void ) {
   if( gl_mtrnm_p.inc_bpm < MTRNM_MAX_BPM ) gl_mtrnm_p.inc_bpm++;
+}
+
+void menu_inc_bpm_inc_fast( void ) {
+  if( gl_mtrnm_p.inc_bpm < MTRNM_MAX_BPM ) gl_mtrnm_p.inc_bpm += 10;
+  if( gl_mtrnm_p.inc_bpm > MTRNM_MAX_BPM ) gl_mtrnm_p.inc_bpm = MTRNM_MAX_BPM;
 }
 
 void menu_inc_bpm_dec( void ) {
   if( gl_mtrnm_p.inc_bpm > 1 ) gl_mtrnm_p.inc_bpm--;
 }
 
+void menu_inc_bpm_dec_fast( void ) {
+  if( gl_mtrnm_p.inc_bpm > 1 ) gl_mtrnm_p.inc_bpm -= 10;
+  if( gl_mtrnm_p.inc_bpm > MTRNM_MAX_BPM || gl_mtrnm_p.inc_bpm < MTRNM_MIN_BPM ) 
+    gl_mtrnm_p.inc_bpm = 1;
+}
+
 void menu_inc_bar_inc( void ) {
   if( gl_mtrnm_p.inc_bar < MTRNM_MAX_BEATS ) gl_mtrnm_p.inc_bar++;
+}
+
+void menu_inc_bar_inc_fast( void ) {
+  if( gl_mtrnm_p.inc_bar < MTRNM_MAX_BEATS ) gl_mtrnm_p.inc_bar += 4;
+  if( gl_mtrnm_p.inc_bar > MTRNM_MAX_BEATS ) gl_mtrnm_p.inc_bar = MTRNM_MAX_BEATS;
 }
 
 void menu_inc_bar_dec( void ) {
   if( gl_mtrnm_p.inc_bar > MTRNM_MIN_BEATS ) gl_mtrnm_p.inc_bar--;
 }
 
+void menu_inc_bar_dec_fast( void ) {
+  if( gl_mtrnm_p.inc_bar > MTRNM_MIN_BEATS ) gl_mtrnm_p.inc_bar -= 4;
+  if( gl_mtrnm_p.inc_bar < MTRNM_MIN_BEATS || gl_mtrnm_p.inc_bar > MTRNM_MAX_BEATS ) 
+    gl_mtrnm_p.inc_bar = MTRNM_MIN_BEATS;
+}
+
 void menu_target_bpm_inc( void ) {
   if( gl_mtrnm_p.target_bpm < MTRNM_MAX_BPM ) gl_mtrnm_p.target_bpm++;
+}
+
+void menu_target_bpm_inc_fast( void ) {
+  if( gl_mtrnm_p.target_bpm < MTRNM_MAX_BPM ) gl_mtrnm_p.target_bpm += 10;
+  if( gl_mtrnm_p.target_bpm > MTRNM_MAX_BPM ) gl_mtrnm_p.target_bpm = MTRNM_MAX_BPM;
 }
 
 void menu_target_bpm_dec( void ) {
   if( gl_mtrnm_p.target_bpm > MTRNM_MIN_BPM ) gl_mtrnm_p.target_bpm--;
 }
 
+void menu_target_bpm_dec_fast( void ) {
+  if( gl_mtrnm_p.target_bpm > MTRNM_MIN_BPM ) gl_mtrnm_p.target_bpm -= 10;
+  if( gl_mtrnm_p.target_bpm < MTRNM_MIN_BPM || gl_mtrnm_p.target_bpm > MTRNM_MAX_BPM ) 
+    gl_mtrnm_p.target_bpm = MTRNM_MIN_BPM;
+}
+
 void menu_beat_inc( void ) {
   if( gl_mtrnm_p.beats < MTRNM_MAX_BEATS ) gl_mtrnm_p.beats++;
+}
+
+void menu_beat_inc_fast( void ) {
+  if( gl_mtrnm_p.beats < MTRNM_MAX_BEATS ) gl_mtrnm_p.beats += 4;
+  if( gl_mtrnm_p.beats > MTRNM_MAX_BEATS ) gl_mtrnm_p.beats = MTRNM_MAX_BEATS;
 }
 
 void menu_beat_dec( void ) {
   if( gl_mtrnm_p.beats > MTRNM_MIN_BEATS ) gl_mtrnm_p.beats--;
 }
 
+void menu_beat_dec_fast( void ) {
+  if( gl_mtrnm_p.beats > MTRNM_MIN_BEATS ) gl_mtrnm_p.beats -= 4;
+  if( gl_mtrnm_p.beats < MTRNM_MIN_BEATS || gl_mtrnm_p.beats > MTRNM_MAX_BEATS ) 
+    gl_mtrnm_p.beats = MTRNM_MIN_BEATS;
+}
+
 void menu_subdivs_inc( void ) {
   if( gl_mtrnm_p.subdivs < MTRNM_MAX_SUBDIVS ) gl_mtrnm_p.subdivs++;
 }
 
+void menu_subdivs_inc_fast( void ) {
+  if( gl_mtrnm_p.subdivs < MTRNM_MAX_SUBDIVS ) gl_mtrnm_p.subdivs += 3;
+  if( gl_mtrnm_p.subdivs > MTRNM_MAX_SUBDIVS ) gl_mtrnm_p.subdivs = MTRNM_MAX_SUBDIVS;
+}
+
 void menu_subdivs_dec( void ) {
   if( gl_mtrnm_p.subdivs > MTRNM_MIN_SUBDIVS ) gl_mtrnm_p.subdivs--;
+}
+
+void menu_subdivs_dec_fast( void ) {
+  if( gl_mtrnm_p.subdivs > MTRNM_MIN_SUBDIVS ) gl_mtrnm_p.subdivs -= 3;
+  if( gl_mtrnm_p.subdivs < MTRNM_MIN_SUBDIVS || gl_mtrnm_p.subdivs > MTRNM_MAX_SUBDIVS ) 
+    gl_mtrnm_p.subdivs = MTRNM_MIN_SUBDIVS;
 }
 
 void menu_toggle_accent( void ) {
@@ -99,108 +168,40 @@ void menu_beep_ms_dec( void ) {
 
 // Printing
 void menu_print_tempo( void ) {
-
-  // t. for tempo prefix
-  output_buf[0] = 't';
-  output_buf[1] = '.';
-
-  dig_itoa16( dig_buf, gl_mtrnm_p.active_bpm );
-  output_buf[2] = dig_buf[1];
-  output_buf[3] = dig_buf[2];
-  output_buf[4] = dig_buf[3];
-
-  output_len = 5;
+  sprintf( output_buf, "t.%3d", gl_mtrnm_p.active_bpm );
 }
 
 void menu_print_beats( void ) {
-
   if( gl_mtrnm_p.beats > 9 || gl_mtrnm_p.cur_beat > 9 ) {
-    dig_itoa16( dig_buf, gl_mtrnm_p.beats );
-    output_buf[0] = dig_buf[2];
-    output_buf[1] = dig_buf[3];
-    output_buf[2] = '.';
-
-    dig_itoa16( dig_buf, gl_mtrnm_p.cur_beat );
-    output_buf[3] = dig_buf[2];
-    output_buf[4] = dig_buf[3];
-
-    output_len = 5;
+    sprintf( output_buf, "%2d.%2d", gl_mtrnm_p.beats, gl_mtrnm_p.cur_beat );
   } else {
-    output_buf[0] = 'b'; // beat
-    output_buf[1] = '.';
-    output_buf[2] = ' ';
-
-    dig_itoa16( dig_buf, gl_mtrnm_p.beats );
-    output_buf[3] = dig_buf[3];
-    output_buf[4] = '.';
-
-    dig_itoa16( dig_buf, gl_mtrnm_p.cur_beat );
-    output_buf[5] = dig_buf[3];
-
-    output_len = 6;
+    sprintf( output_buf, "b. %d.%d", gl_mtrnm_p.beats, gl_mtrnm_p.cur_beat );
   }
 }
 
 void menu_print_subdivs( void ) {
-
-  output_buf[0] = 'S'; // division
-  output_buf[1] = 'd';
-  output_buf[2] = '.';
-
-  dig_itoa16( dig_buf, gl_mtrnm_p.subdivs );
-  output_buf[3] = dig_buf[3];
-  output_buf[4] = '.';
-
-  dig_itoa16( dig_buf, gl_mtrnm_p.cur_subdiv );
-  output_buf[5] = dig_buf[3];
-
-  output_len = 6;
+  sprintf( output_buf, "Sd.%d.%d", gl_mtrnm_p.subdivs, gl_mtrnm_p.cur_subdiv );
 }
 
 void menu_print_accent( void ) {
-
-  output_buf[0] = 'A'; // accent
-  output_buf[1] = 'c';
-  output_buf[2] = 'c';
-  output_buf[3] = '.';
-
-  dig_itoa16( dig_buf, gl_mtrnm_p.accent_en );
-  output_buf[4] = dig_buf[3];
-
-  output_len = 5;
+  sprintf( output_buf, "Acc.%d", gl_mtrnm_p.accent_en );
 }
 
 void menu_print_swing( void ) {
-
-  output_buf[0] = gl_mtrnm_p.subdivs % 2 == 0 ? 'd' : ' '; // to somehow indicate tuplet
-  output_buf[1] = gl_mtrnm_p.subdivs % 2 == 0 && gl_mtrnm_p.swing_en ? ' ' : 'd';
-  output_buf[2] = gl_mtrnm_p.swing_en ? ' ' : 'd';
-  output_buf[3] = 'd';
-
-  output_len = 4;
+  sprintf( output_buf, "%s%s%sd", 
+  gl_mtrnm_p.subdivs % 2 == 0 ? "d" : " ",
+  gl_mtrnm_p.subdivs % 2 == 0 && gl_mtrnm_p.swing_en ? " " : "d",
+  gl_mtrnm_p.swing_en ? " " : "d" );
 }
 
 void print_cntdw_prog( void ) {
-  dig_itoa16( dig_buf, gl_mtrnm_p.cur_cntdwn );
-  output_buf[0] = '-';
-  output_buf[1] = dig_buf[1];
-  output_buf[2] = dig_buf[2];
-  output_buf[3] = dig_buf[3];
-
-  output_len = 4;
+  sprintf( output_buf, "%4d", -gl_mtrnm_p.cur_cntdwn );
 }
 
 void menu_print_led_sett( void ) {
-
-  dig_itoa16( dig_buf, gl_mtrnm_p.led_en );
-  output_buf[0] = 'L';
-  output_buf[1] = 'e';
-  output_buf[2] = 'd';
-  output_buf[3] = '.';
-  output_buf[4] = dig_buf[3];
-
-  output_len = 5;
+  sprintf( output_buf, "Led.%d", gl_mtrnm_p.led_en );
 }
+
 void menu_print_start_prog( void ) {
 
   if( gl_mtrnm_p.cur_cntdwn ) {
@@ -208,13 +209,7 @@ void menu_print_start_prog( void ) {
     return;
   }
 
-  dig_itoa16( dig_buf, gl_mtrnm_p.active_bpm );
-  output_buf[0] = dig_buf[1];
-  output_buf[1] = dig_buf[2];
-  output_buf[2] = dig_buf[3];
-  output_buf[3] = '-';
-
-  output_len = 4;
+  sprintf( output_buf, "%3d-", gl_mtrnm_p.active_bpm );
 }
 
 void menu_print_end_prog( void ) {
@@ -224,13 +219,7 @@ void menu_print_end_prog( void ) {
     return;
   }
 
-  dig_itoa16( dig_buf, gl_mtrnm_p.target_bpm );
-  output_buf[0] = '-';
-  output_buf[1] = dig_buf[1];
-  output_buf[2] = dig_buf[2];
-  output_buf[3] = dig_buf[3];
-
-  output_len = 4;
+  sprintf( output_buf, "-%3d", gl_mtrnm_p.target_bpm );
 }
 
 void menu_print_inc_bpm_prog( void ) {
@@ -241,23 +230,9 @@ void menu_print_inc_bpm_prog( void ) {
   }
 
   if( gl_mtrnm_p.inc_bpm < 99 ) {
-    output_buf[0] = '-'; // bar
-
-    dig_itoa16( dig_buf, gl_mtrnm_p.inc_bpm );
-    output_buf[1] = dig_buf[2];
-    output_buf[2] = dig_buf[3];
-
-    output_buf[3] = '-';
-
-    output_len = 4;
+    sprintf( output_buf, "-%2d-", gl_mtrnm_p.inc_bpm );
   } else {
-
-    dig_itoa16( dig_buf, gl_mtrnm_p.inc_bpm );
-    output_buf[0] = ' ';
-    output_buf[1] = dig_buf[1];
-    output_buf[2] = dig_buf[2];
-    output_buf[3] = dig_buf[3];
-
+    sprintf( output_buf, " %3d", gl_mtrnm_p.inc_bpm );
   }
 }
 
@@ -269,28 +244,9 @@ void menu_print_inc_bar_prog( void ) {
   }
 
   if( gl_mtrnm_p.inc_bar > 9 || gl_mtrnm_p.cur_bar > 9 ) {
-    dig_itoa16( dig_buf, gl_mtrnm_p.inc_bar );
-    output_buf[0] = dig_buf[2];
-    output_buf[1] = dig_buf[3];
-    output_buf[2] = '.';
-
-    dig_itoa16( dig_buf, gl_mtrnm_p.cur_bar );
-    output_buf[3] = dig_buf[2];
-    output_buf[4] = dig_buf[3];
-
-    output_len = 5;
+    sprintf( output_buf, "%2d.%2d", gl_mtrnm_p.inc_bar, gl_mtrnm_p.cur_bar );
   } else {
-    output_buf[0] = '['; // like a bar on a music sheet
-
-    dig_itoa16( dig_buf, gl_mtrnm_p.inc_bar );
-    output_buf[1] = dig_buf[3];
-    output_buf[2] = '.';
-
-    dig_itoa16( dig_buf, gl_mtrnm_p.cur_bar );
-    output_buf[3] = dig_buf[3];
-    output_buf[4] = ']';
-
-    output_len = 5;
+    sprintf( output_buf, "[%d.%d]", gl_mtrnm_p.inc_bar, gl_mtrnm_p.cur_bar );
   }
 }
 
@@ -301,63 +257,23 @@ void print_cntdw_en_prog( void ) {
     return;
   }
 
-  output_buf[0] = 'C';
-  output_buf[1] = 'n';
-  output_buf[2] = 't';
-  output_buf[3] = '.';
-
-  dig_itoa16( dig_buf, gl_mtrnm_p.cntdwn_en );
-  output_buf[4] = dig_buf[3];
-
-  output_len = 5;
+  sprintf( output_buf, "Cnt.%d", gl_mtrnm_p.cntdwn_en );
 }
 
 void menu_print_strong_note_sett( void ) {
-
-  note2string( dig_buf, gl_mtrnm_p.note_strong );
-  output_buf[0] = '1';
-  output_buf[1] = '.';
-  output_buf[2] = dig_buf[0];
-  output_buf[3] = dig_buf[1];
-  output_buf[4] = dig_buf[2];
-
-  output_len = 5;
+  sprintf( output_buf, "1.%s", note2str( gl_mtrnm_p.note_strong ) );
 }
 
 void menu_print_weak_note_sett( void ) {
-
-  note2string( dig_buf, gl_mtrnm_p.note_weak );
-  output_buf[0] = '2';
-  output_buf[1] = '.';
-  output_buf[2] = dig_buf[0];
-  output_buf[3] = dig_buf[1];
-  output_buf[4] = dig_buf[2];
-
-  output_len = 5;
+  sprintf( output_buf, "2.%s", note2str( gl_mtrnm_p.note_weak ) );
 }
 
 void menu_print_subdiv_note_sett( void ) {
-
-  note2string( dig_buf, gl_mtrnm_p.note_subdiv );
-  output_buf[0] = '3';
-  output_buf[1] = '.';
-  output_buf[2] = dig_buf[0];
-  output_buf[3] = dig_buf[1];
-  output_buf[4] = dig_buf[2];
-
-  output_len = 5;
+  sprintf( output_buf, "3.%s", note2str( gl_mtrnm_p.note_subdiv ) );
 }
 
 void menu_print_beep_ms_sett( void ) {
-
-  dig_itoa16( dig_buf, gl_mtrnm_p.beep_ms );
-  output_buf[0] = 'b'; // as in beep ms
-  output_buf[1] = '.';
-  output_buf[2] = ' ';
-  output_buf[3] = dig_buf[2];
-  output_buf[4] = dig_buf[3];
-
-  output_len = 5;
+  sprintf( output_buf, "b.%3d", gl_mtrnm_p.beep_ms );
 }
 
 void menu_main_entry( void ) {

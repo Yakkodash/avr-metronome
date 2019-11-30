@@ -14,4 +14,4 @@ typedef enum {
 } note_t;
 
 uint16_t note2freq( note_t note );
-void note2string( char *s, note_t note );
+char* note2str( note_t note );

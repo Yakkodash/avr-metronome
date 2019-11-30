@@ -10,29 +10,32 @@ static int8_t enc_btn_check = 0;
 
 static uint8_t enc_rot_check = 0; // indicate that encoder was turned while being pressed
 
-static uint8_t btn2_check = 0;
 // Encoder button check
 static int8_t check_enc_btn_release( void ) {
-  return !( PIND & _BV( PIND7 ) );
+  return !( CTRL_ENC_BTN_INPINS & _BV( CTRL_ENC_BTN_PIN ) );
 }
 
 static int8_t check_enc_btn_press( void ) {
-  return PIND & _BV( PD7 );
+  return CTRL_ENC_BTN_INPINS & _BV( CTRL_ENC_BTN_PIN );
 }
 
-void check_switch( void ) {
-  if( PINC & _BV( PINC4 ) ) gl_ctrl_p.ctrl_swt_on_clkb( );
+static void check_switch( void ) {
+  if( CTRL_SWT_INPINS & _BV( CTRL_SWT_PIN ) ) gl_ctrl_p.ctrl_swt_on_clkb( );
   else gl_ctrl_p.ctrl_swt_off_clkb( );
 }
 
 static int8_t check_btn2_press( void ) {
-  return( PIND & _BV( PIND1 ) );
+  return( CTRL_BTN2_INPINS & _BV( CTRL_BTN2_PIN ) );
+}
+
+static int8_t check_btn0_press( void ) {
+  return( CTRL_BTN0_INPINS & _BV( CTRL_BTN0_PIN ) );
 }
 
 // Encoder rotation check
 static int8_t check_enc_moved( void ) {
-  enc_a = PINB & _BV( PB0 );
-  enc_b = PINB & _BV( PB1 );
+  enc_a = CTRL_ENC_ROT_INPINS & _BV( CTRL_ENC_ROT_A_PIN );
+  enc_b = CTRL_ENC_ROT_INPINS & _BV( CTRL_ENC_ROT_B_PIN );
 
   if( !enc_a && enc_b ) enc_state = 1; // if falling edge appeared on line A and B is 1 then rotating right
   if( !enc_a && !enc_b ) enc_state = -1;  // if falling edge on line A and B is 0, rotating left
@@ -106,8 +109,6 @@ void ctrl_init( void ) {
 
 // Encoder rotation interrupt
 ISR( CTRL_ENC_ROT_PCINT_V ) {
-  enc_btn_check = check_enc_btn_press( );
-
   if( check_enc_moved( ) ) {
     if( enc_state == 1 ) {
       enc_btn_check ? gl_ctrl_p.ctrl_enc_a_btn_clbk( ) : gl_ctrl_p.ctrl_enc_a_clbk( ); // right
@@ -116,7 +117,7 @@ ISR( CTRL_ENC_ROT_PCINT_V ) {
       enc_btn_check ? gl_ctrl_p.ctrl_enc_b_btn_clbk( ) : gl_ctrl_p.ctrl_enc_b_clbk( ); // left
     }
     enc_state = 0;
-    enc_rot_check = enc_btn_check;
+    enc_rot_check = check_enc_btn_press( );
   }
 }
 
@@ -125,14 +126,21 @@ ISR( CTRL_SWT_PCINT_V ) {
 }
 
 ISR( CTRL_ENC_BTN_PCINT_V ) {
+
   if( check_btn2_press( ) ) {
     gl_ctrl_p.ctrl_btn2_clbk( );
-  } else 
+  } 
   if( check_enc_btn_release( ) && enc_btn_check ) {
-    if( enc_rot_check ) enc_rot_check = 0;
-    else gl_ctrl_p.ctrl_enc_btn_clbk( );
+    if( enc_rot_check ) {
+      enc_rot_check = 0;
+    } else {
+      gl_ctrl_p.ctrl_enc_btn_clbk( );
+    }
+    enc_btn_check = 0;
   }
-  //check_btn2( );
+  if( check_enc_btn_press( ) ) {
+    enc_btn_check = 1;
+  }
 }
 
 ISR( CTRL_BTN0_INT_V ) {
@@ -141,5 +149,8 @@ ISR( CTRL_BTN0_INT_V ) {
 
 // Button0 interrupt
 ISR( CTRL_BTN1_INT_V ) {
+  if( check_btn0_press( ) && check_btn2_press( ) ) {
+    gl_ctrl_p.ctrl_btn012_clbk( );
+  } else
   gl_ctrl_p.ctrl_btn1_clbk( );
 }	

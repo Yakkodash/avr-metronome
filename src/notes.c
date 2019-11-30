@@ -40,7 +40,6 @@ uint16_t note2freq( note_t note ) {
   return note_vals[note];
 }
 
-void note2string( char *s, note_t note ) {
-  memcpy( s, note_names[note], sizeof( char ) * NOTE_NAME_LEN );
-  s = note_names[note];
+char* note2str( note_t note ) {
+  return note_names[note];
 }

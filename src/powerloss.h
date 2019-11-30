@@ -7,12 +7,10 @@
 #define PWRLOSS_PIN       PC5
 #define PWRLOSS_ADC_CHAN  5
 
-#define PWRLOSS_THRESH_LOW  500
+#define PWRLOSS_THRESH_LOW  800
 #define PWRLOSS_THRESH_HIGH 1000
 #define PWRLOSS_DELAY_MS    1000
 #define PWRLOSS_CHECK_MS    1
-
-extern uint16_t pwr_adc_val;
 
 void powerloss_detect_init( void (*clbk)(void) );
 uint8_t powerloss_detect_tick( void );

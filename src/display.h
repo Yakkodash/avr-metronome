@@ -6,8 +6,9 @@
 #define DISP_CS_PORT PORTC
 
 #define DIG_NUM 4
+#define DIG_NONE -1
 
-#define DISP_DELAY_MS 3
+#define DISP_DELAY_US 1000
 
 static const uint8_t display_digs[DIG_NUM] = { PC1, PC2, PC3, PC0 };
 

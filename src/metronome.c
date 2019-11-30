@@ -4,7 +4,6 @@
 #include "sound.h"
 #include "led.h"
 #include "display.h"
-//#include "eeprom.h"
 
 void mtrnm_start( void ) {
   TCCR1B |= _BV( CS12 ) | _BV( CS10 ); // prescaler 1024 selected
@@ -21,14 +20,14 @@ void mtrnm_stop( void ) {
 }
 
 static double bpm2ms( double bpm ) {
-  return 60000 / bpm;
+  return 60e3 / bpm;
 }
 
 static void mtrnm_set_period( double ms ) {
   TCNT1 = 65535 - ms * F_CPU / 1024 / 1000; // set output compare register
 }
 
-void mtrnm_change_mode( mtrnm_mode_t mode ) {
+void mtrnm_change_mode( uint8_t mode ) {
   if( mode == MTRNM_MODE_CONST ) {
     gl_mtrnm_p.active_bpm = gl_mtrnm_p.start_bpm;
   }
@@ -47,7 +46,6 @@ void mtrnm_reset_const( void ) {
   mtrnm_stop( );
   mtrnm_reset( );
   mtrnm_start( );
-
 }
 
 void mtrnm_reset_prog( void ) {
@@ -67,7 +65,6 @@ void mtrnm_reset_sett( void ) {
   gl_mtrnm_p.note_weak = DFLT_WEAK_NOTE;
   gl_mtrnm_p.note_subdiv = DFLT_SUBDIV_NOTE;
   gl_mtrnm_p.led_en = DFLT_LED_EN;
-  //eeprom_save_sound_set( );
 }
 
 static void mtrnm_calc_next_bpm( ) {

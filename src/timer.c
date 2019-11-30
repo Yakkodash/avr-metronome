@@ -4,9 +4,8 @@
 #include "timer.h"
 #include "display.h"
 #include "led.h"
-#include "util.h"
 
-volatile static uint32_t ticks = 0; // 1 tick == 16 us, will overflow after about 19 hours
+static volatile uint32_t ticks = 0; // 1 tick == 16 us, will overflow after about 19 hours
 
 ISR( TIMER2_OVF_vect ) {
   ticks++;
