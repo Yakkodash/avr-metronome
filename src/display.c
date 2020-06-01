@@ -15,14 +15,8 @@ void display_init( void ) {
   }
 }
 
-static void display_set_digit( uint8_t dig_num ) {
-  for( uint8_t i = 0; i < DIG_NUM; i++ ) {
-    if( i == dig_num ) {
-      DISP_CS_PORT &= ~( _BV( display_digs[i] ) );
-    } else {
-      DISP_CS_PORT |= _BV( display_digs[i] );
-    }
-  }
+static void display_set_digit_active( int8_t dig_num ) {
+  DISP_CS_PORT = dig_num == DIG_NONE ? 0 : _BV( display_digs[dig_num] );
 }
 
 void display_set_chars( char *data, uint8_t len ) {
@@ -45,11 +39,11 @@ void display_tick( void ) {
 
   spi_transmit( display_buf[display_cur_dig] );
 
-  display_set_digit( display_cur_dig );
+  display_set_digit_active( display_cur_dig );
 
   display_cur_dig++;
   if( display_cur_dig == DIG_NUM ) display_cur_dig = 0;
 
   _delay_us( DISP_DELAY_US );
-  display_set_digit( DIG_NONE );
+  display_set_digit_active( DIG_NONE );
 }

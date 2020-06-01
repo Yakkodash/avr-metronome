@@ -6,24 +6,17 @@ static void spi_clear( void ) {
 }
 
 void spi_init( void ) {
-  SPI_PORT_DIR |= _BV( SPI_NSS_PIN ) | _BV( SPI_MOSI_PIN ) | _BV( SPI_SCK_PIN ); // setup SPI pins (no MISO)
-  SPI_PORT &= ~( _BV( SPI_NSS_PIN ) | _BV( SPI_MOSI_PIN ) | _BV( SPI_SCK_PIN ) ); // set SPI pins to 0
+  SPI_PORT_DIR |= _BV( SPI_NSS_PIN ) | _BV( SPI_MOSI_PIN ) | _BV( SPI_SCK_PIN ); // does not work without NSS
+  SPI_PORT &= ~( _BV( SPI_NSS_PIN ) | _BV( SPI_MOSI_PIN ) | _BV( SPI_SCK_PIN ) ); 
 
 	SPCR = ( _BV( SPE ) | _BV( MSTR ) ); // init bus, set master
 
   spi_clear( );
 }
 
-static void spi_commit( void ) {
-	while ( !( SPSR & ( _BV( SPIF ) ) ) );
-  // Generate signal fall for storage register
-	SPI_PORT |= _BV( SPI_NSS_PIN );
-	SPI_PORT &= ~( _BV( SPI_NSS_PIN ) );
-}
-
 // There are two shift registers giving 16bit output register, but SPDR is only 8bit
 void spi_transmit( uint8_t val ) {
 	SPDR = val;
 
-  spi_commit( );
+	while ( !( SPSR & ( _BV( SPIF ) ) ) );
 }

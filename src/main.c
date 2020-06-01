@@ -10,13 +10,11 @@
 #include "menu.h"
 #include "timer.h"
 #include "eeprom.h"
-#include "adc.h"
-#include "powerloss.h"
 #include "notes.h"
 #include "taptempo.h"
 
 volatile struct mtrnm_p_s gl_mtrnm_p = {
-  .beep_ms = MTRNM_MIN_BEEP_MS,
+  .beep_ms = DFLT_BEEP_MS,
 
   .note_strong = DFLT_STRONG_NOTE,
   .note_weak = DFLT_WEAK_NOTE,
@@ -32,7 +30,8 @@ volatile struct mtrnm_p_s gl_mtrnm_p = {
 
   .target_bpm = 260,
   .start_bpm = 120,
-  .active_bpm = 120,
+
+  .active_bpm = 260,
 
   .inc_bar = DFLT_INC_BAR,
   .inc_bpm = DFLT_INC_BPM,
@@ -71,24 +70,21 @@ int main( void ) {
   CLKPR = ( 1 << CLKPCE );
   CLKPR = 0;
 
-  adc_init( );
   spi_init( );
   sound_init( );
-  led_init( );
+  //led_init( );
   display_init( );
-  powerloss_detect_init( powerloss_clbk );
 
   timer_start( );
   mtrnm_start( );
 
-  eeprom_load_mtrnm_set( );
+  //eeprom_load_mtrnm_set( );
 
-  ctrl_init( );
+  //ctrl_init( );
 
   sei( );
 
   while( 1 ) { // happens about every 12-13ms
-    if( powerloss_detect_tick() ) break; // try to die gracefully
     menu_tick( );
   }
 

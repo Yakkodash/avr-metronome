@@ -1,9 +1,0 @@
-"Позиция";"Обозначение";"Корпус";"Количество";"Значение";"Поставщик и справка";
-1;"U2";"CA56-12SRWA";1;"CC56-12SRWA";;;
-2;"REF**,REF**,REF**,REF**";"MountingHole_2.2mm_M2";4;"MountingHole_2.2mm_M2";;;
-3;"J1";"PinHeader_1x05_P2.54mm_Vertical";1;"Conn_01x05_Male";;;
-4;"J2";"PinHeader_1x04_P2.54mm_Vertical";1;"Conn_01x04_Male";;;
-5;"R4,R5,R6,R7";"R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal";4;"330";;;
-6;"U1";"DIP-16_W7.62mm_Socket";1;"74HC595";;;
-7;"R3,R2";"R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal";2;"0";;;
-8;"R1";"R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal";1;"0";;;

@@ -22,13 +22,13 @@
 #define DFLT_LED_EN       1
 #define DFLT_ACC_EN       1
 #define DFLT_CNTDWND_EN   1
-#define DFLT_SWING_EN     1
+#define DFLT_SWING_EN     0
 
 #define DFLT_BEEP_MS      7
 
-#define DFLT_STRONG_NOTE  G7
-#define DFLT_WEAK_NOTE    Ab6
-#define DFLT_SUBDIV_NOTE  A4
+#define DFLT_STRONG_NOTE  G4
+#define DFLT_WEAK_NOTE    Ab3
+#define DFLT_SUBDIV_NOTE  A3
 
 #define DFLT_BPM          120
 

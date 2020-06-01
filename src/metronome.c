@@ -108,8 +108,7 @@ ISR( TIMER1_OVF_vect ) {
           mtrnm_calc_next_bpm( );
       }
 
-      sound_set_note( gl_mtrnm_p.accent_en ? gl_mtrnm_p.note_strong : gl_mtrnm_p.note_weak );
-      sound_start( );
+      sound_start( note2freq( gl_mtrnm_p.accent_en ? gl_mtrnm_p.note_strong : gl_mtrnm_p.note_weak ) );
 
       if( gl_mtrnm_p.led_en ) {
         if( gl_mtrnm_p.accent_en ) led_set( 0, 1 );
@@ -127,8 +126,7 @@ ISR( TIMER1_OVF_vect ) {
     case WEAK_BEAT_START:
       gl_mtrnm_p.cur_beat++;
 
-      sound_set_note( gl_mtrnm_p.note_weak );
-      sound_start( );
+      sound_start( note2freq( gl_mtrnm_p.note_weak ) );
 
       if( gl_mtrnm_p.led_en ) {
         led_set( 1, 1 );
@@ -150,15 +148,13 @@ ISR( TIMER1_OVF_vect ) {
       if( gl_mtrnm_p.swing_en ) {
         if( gl_mtrnm_p.cur_subdiv == 1 || gl_mtrnm_p.cur_subdiv == gl_mtrnm_p.subdivs ) {
 
-          sound_set_note( gl_mtrnm_p.note_subdiv );
-          sound_start( );
+          sound_start( note2freq( gl_mtrnm_p.note_subdiv ) );
 
           if( gl_mtrnm_p.led_en ) led_set( 2, 1 );
         }
 
       } else {
-        sound_set_note( gl_mtrnm_p.note_subdiv );
-        sound_start( );
+        sound_start( note2freq( gl_mtrnm_p.note_subdiv ) );
 
         if( gl_mtrnm_p.led_en ) led_set( 2, 1 );
       }

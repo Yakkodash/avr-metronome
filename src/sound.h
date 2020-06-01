@@ -13,8 +13,6 @@
 
 void sound_init( void );
 
-int16_t sound_set_freq( uint16_t freq );
-void sound_set_note( note_t note );
-
-void sound_start( void );
+void sound_start( uint16_t freq );
 void sound_stop( void );
+
