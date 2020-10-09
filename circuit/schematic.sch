@@ -623,12 +623,12 @@ Wire Wire Line
 $Comp
 L Device:CP C11
 U 1 1 5EC94855
-P 4200 5600
-F 0 "C11" V 4455 5600 50  0000 C CNN
-F 1 "220u" V 4364 5600 50  0000 C CNN
-F 2 "Capacitor_THT:CP_Radial_D8.0mm_P3.50mm" H 4238 5450 50  0001 C CNN
-F 3 "~" H 4200 5600 50  0001 C CNN
-	1    4200 5600
+P 4200 5950
+F 0 "C11" V 4455 5950 50  0000 C CNN
+F 1 "220u" V 4364 5950 50  0000 C CNN
+F 2 "Capacitor_THT:CP_Radial_D8.0mm_P3.50mm" H 4238 5800 50  0001 C CNN
+F 3 "~" H 4200 5950 50  0001 C CNN
+	1    4200 5950
 	0    -1   -1   0   
 $EndComp
 Wire Wire Line
@@ -1303,12 +1303,12 @@ $EndComp
 $Comp
 L Device:CP C10
 U 1 1 600F1B99
-P 4200 5100
-F 0 "C10" V 4455 5100 50  0000 C CNN
-F 1 "220u" V 4364 5100 50  0000 C CNN
-F 2 "Capacitor_THT:CP_Radial_D8.0mm_P3.50mm" H 4238 4950 50  0001 C CNN
-F 3 "~" H 4200 5100 50  0001 C CNN
-	1    4200 5100
+P 4200 5450
+F 0 "C10" V 4455 5450 50  0000 C CNN
+F 1 "220u" V 4364 5450 50  0000 C CNN
+F 2 "Capacitor_THT:CP_Radial_D8.0mm_P3.50mm" H 4238 5300 50  0001 C CNN
+F 3 "~" H 4200 5450 50  0001 C CNN
+	1    4200 5450
 	0    -1   -1   0   
 $EndComp
 $Comp
@@ -1329,39 +1329,7 @@ Wire Wire Line
 Wire Wire Line
 	2950 5100 2950 5650
 Wire Wire Line
-	4350 5100 4800 5100
-Wire Wire Line
-	4800 5100 4800 5150
-Wire Wire Line
-	3800 5950 3950 5950
-Wire Wire Line
-	4800 5650 4800 5600
-Wire Wire Line
-	4800 5600 4350 5600
-Wire Wire Line
-	3950 5600 4050 5600
-Wire Wire Line
-	3950 5600 3950 5950
-Wire Wire Line
-	3850 5750 3850 5100
-Connection ~ 3850 5100
-Wire Wire Line
-	3850 5100 4050 5100
-Wire Wire Line
-	4800 5450 4800 5550
-Wire Wire Line
-	4800 5550 4700 5550
-Wire Wire Line
-	4700 5550 4700 6050
-Wire Wire Line
-	4700 6050 4800 6050
-Wire Wire Line
-	4800 6050 4800 5950
-Wire Wire Line
-	4700 6050 4700 6400
-Wire Wire Line
-	4700 6400 3300 6400
-Connection ~ 4700 6050
+	3850 5750 3850 5450
 Connection ~ 3300 6400
 Wire Wire Line
 	5100 5300 5100 5350
@@ -1371,15 +1339,12 @@ Wire Wire Line
 	5100 5800 5100 5850
 Wire Wire Line
 	5100 6150 5100 6400
-Connection ~ 4700 6400
 Wire Wire Line
 	5100 5650 5100 5700
 Wire Wire Line
 	5100 5700 5200 5700
 Wire Wire Line
 	5200 5700 5200 6400
-Wire Wire Line
-	4700 6400 5100 6400
 Connection ~ 5100 6400
 Wire Wire Line
 	5100 6400 5200 6400
@@ -1786,4 +1751,37 @@ Wire Wire Line
 	6650 2500 6650 1950
 Wire Wire Line
 	6650 2500 6850 2500
+Text Notes 4850 5100 0    50   ~ 0
+3\n1
+Text Notes 4550 5900 0    50   ~ 0
+6\n4\n
+Wire Wire Line
+	3300 6400 4600 6400
+Wire Wire Line
+	4800 5450 4350 5450
+Wire Wire Line
+	4350 5950 4800 5950
+Wire Wire Line
+	4800 5650 4800 5600
+Wire Wire Line
+	4800 5600 4600 5600
+Wire Wire Line
+	4600 5600 4600 6400
+Connection ~ 4600 6400
+Wire Wire Line
+	4600 6400 5100 6400
+Wire Wire Line
+	4800 5150 4800 5100
+Wire Wire Line
+	4800 5100 4600 5100
+Wire Wire Line
+	4600 5100 4600 5600
+Connection ~ 4600 5600
+Wire Wire Line
+	4050 5450 3850 5450
+Connection ~ 3850 5450
+Wire Wire Line
+	3850 5450 3850 5100
+Wire Wire Line
+	3800 5950 4050 5950
 $EndSCHEMATC
